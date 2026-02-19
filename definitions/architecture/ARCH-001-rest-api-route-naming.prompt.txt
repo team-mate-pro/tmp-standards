@@ -1,0 +1,44 @@
+Check if the codebase follows ARCH-001: REST API Route Naming Convention.
+
+RULE: All REST API routes must use plural nouns to represent resources. Verbs are not allowed in route paths. HTTP methods (GET, POST, PUT, PATCH, DELETE) determine the action.
+
+SEARCH FOR VIOLATIONS:
+1. Find all Controller classes with #[Route] attributes
+2. Check route paths for forbidden patterns:
+   - Verbs in path: /enable, /disable, /activate, /deactivate, /create, /update, /delete, /get, /find, /check, /validate, /process, /execute, /run, /start, /stop, /pay, /send, /mark, /set
+   - Singular nouns where plural expected: /api/shop (should be /api/shops)
+   - Action-oriented paths: /api/*/do-something
+3. Check for verb-based sub-resources:
+   - /api/resources/{id}/enable (should be PATCH /api/resources/{id} with payload)
+   - /api/resources/{id}/disable (should be PATCH /api/resources/{id} with payload)
+   - /api/resources/check-something (should be GET /api/resources/{id}/somethings)
+
+CORRECT PATTERNS:
+- GET /api/resources - list all
+- GET /api/resources/{id} - get one
+- POST /api/resources - create
+- PUT /api/resources/{id} - replace
+- PATCH /api/resources/{id} - update (including state changes via payload)
+- DELETE /api/resources/{id} - delete
+- GET /api/resources/{id}/sub-resources - nested collection
+- PATCH /api/resources/{id} with {"status": "enabled"} - state change
+
+VIOLATION PATTERNS:
+- POST /api/shops/enable (verb in path)
+- POST /api/shops/disable (verb in path)
+- POST /api/settlements/{id}/pay (verb in path)
+- GET /api/facilities/check-availability (verb in path)
+- POST /api/products/create (redundant verb)
+- GET /api/user (singular instead of plural)
+
+CONDITIONAL USE CASE PATTERNS (ALLOWED):
+- Single endpoint with multiple use cases selected by match expression
+- Request DTO implementing multiple interfaces
+- Payload-driven use case execution (e.g., status field determines which use case runs)
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the problematic route definition
+- Explain what verb or pattern is being used incorrectly
+- Suggest the correct RESTful alternative
+- Mark as PASS if no violations found

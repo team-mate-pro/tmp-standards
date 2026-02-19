@@ -1,0 +1,39 @@
+Check if the codebase follows UCB-003: No Authorization Decisions in UseCase Layer.
+
+RULE: UseCase classes must NOT inject or use security/authorization services. Authorization must happen in Controller/CLI layer before invoking UseCase. User identity should be passed via DTO if needed for business logic.
+
+SEARCH FOR VIOLATIONS:
+1. Find all classes ending with "UseCase"
+2. Check constructor for forbidden injections:
+   - Security
+   - AuthorizationCheckerInterface
+   - TokenStorageInterface
+   - AccessDecisionManagerInterface
+3. Check for forbidden attributes/annotations:
+   - #[IsGranted]
+   - @IsGranted
+   - #[Security]
+   - @Security
+4. Check for forbidden method calls in UseCase body:
+   - isGranted()
+   - denyAccessUnlessGranted()
+   - getUser()
+   - getToken()
+
+CORRECT PATTERN:
+- Controller checks authorization with #[IsGranted] or $security->isGranted()
+- Controller extracts user data from security context
+- Controller passes user identity via DTO to UseCase
+- UseCase accepts DTO interface and processes business logic only
+
+VIOLATION PATTERN:
+- UseCase injects Security, AuthorizationCheckerInterface, or TokenStorageInterface
+- UseCase has #[IsGranted] or @IsGranted attribute
+- UseCase calls isGranted(), denyAccessUnlessGranted(), getUser(), or getToken()
+- UseCase accesses security context directly
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the problematic code snippet
+- Explain what authorization service/method is being used incorrectly
+- Mark as PASS if no violations found
