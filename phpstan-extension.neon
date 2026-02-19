@@ -1,0 +1,10 @@
+services:
+    -
+        class: TeamMatePro\TmpStandards\PHPStan\Rules\UseCaseMustHaveInvokeMethodRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: TeamMatePro\TmpStandards\PHPStan\Rules\UseCaseParameterMustBeInterfaceRule
+        tags:
+            - phpstan.rules.rule
