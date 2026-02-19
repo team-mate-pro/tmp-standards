@@ -1,0 +1,21 @@
+Check if the codebase follows CC-001: No Persistence in Creational Patterns.
+
+RULE: Factory and Builder classes must NOT call persist(), flush(), or save() methods. They should only create and return objects. Persistence must be handled by UseCase or higher layer.
+
+SEARCH FOR VIOLATIONS:
+1. Find all classes ending with "Factory" or "Builder"
+2. Check if they inject EntityManagerInterface, ObjectManager, or *RepositoryInterface
+3. Check if they call: persist(), flush(), save(), add(), or store() methods
+
+CORRECT PATTERN:
+- Factory/Builder creates object and returns it
+- UseCase calls factory, then calls repository->save()
+
+VIOLATION PATTERN:
+- Factory/Builder injects EntityManager or Repository
+- Factory/Builder calls persist/flush/save inside create/build method
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the problematic code snippet
+- Mark as PASS if no violations found

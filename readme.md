@@ -28,7 +28,10 @@ Each standard defines HOW it should be verified. Use this table to understand ho
 
 ```
 tmp-standards/
-├── definitions/                    # Standard definitions (markdown + scripts)
+├── definitions/                    # Standard definitions (markdown + scripts/prompts)
+│   ├── clean-code/
+│   │   ├── CC-001-no-persist-in-creational-patterns.md
+│   │   └── CC-001-no-persist-in-creational-patterns.prompt.txt  # AI prompt
 │   ├── infrastructure/
 │   │   ├── INF-001-infrastructure-local-makefile.md
 │   │   └── INF-001-infrastructure-local-makefile.sh  # Validation script
@@ -64,6 +67,7 @@ The standard name can be extended with a longer description.
 
 | Prefix | Category |
 |--------|----------|
+| `CC`   | Clean Code - general coding best practices |
 | `INF`  | Infrastructure - local development, CI/CD, tooling |
 | `UCB`  | UseCase Bundle - rules for UseCase pattern |
 
@@ -79,6 +83,7 @@ Each standard definition should clearly specify:
 
 | Code | Title | Check Method |
 |------|-------|--------------|
+| [CC-001](definitions/clean-code/CC-001-no-persist-in-creational-patterns.md) | No Persistence in Creational Patterns | AI |
 | [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | SCRIPT |
 | [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) | UseCase Parameters Must Be Interfaces | PHPSTAN |
 | [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) | UseCase Must Have Invoke Method | PHPSTAN |
