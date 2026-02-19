@@ -1,5 +1,11 @@
 # INF-001: Local Development Makefile Standard
 
+## Check Method
+
+| Method | Command |
+|--------|---------|
+| **SCRIPT** | `./vendor/team-mate-pro/tmp-standards/definitions/infrastructure/INF-001-infrastructure-local-makefile.sh` |
+
 ## Definition
 
 Every TMP project must include a `Makefile` in the repository root that provides a consistent set of commands for local development, testing, and CI/CD validation.

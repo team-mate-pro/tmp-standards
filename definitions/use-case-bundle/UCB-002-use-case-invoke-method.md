@@ -1,5 +1,13 @@
 # UCB-002: UseCase Must Have Invoke Method
 
+## Check Method
+
+| Method | Command |
+|--------|---------|
+| **PHPSTAN** | `composer phpstan` |
+
+**Rule:** `UseCaseMustHaveInvokeMethodRule` in `phpstan-extension.neon`
+
 ## Definition
 
 Every class ending with `UseCase` must have an `__invoke()` method. This ensures a consistent, single-action pattern for all use cases.

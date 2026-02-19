@@ -2,6 +2,28 @@
 
 A Composer package aggregating coding standards, architectural guidelines, and PHPStan rules for TMP organization.
 
+## Check Methods
+
+Each standard defines HOW it should be verified. Use this table to understand how to check compliance:
+
+```
+┌─────────────┬──────────────────────────────────────────────────────────────┐
+│ Method      │ How to Check                                                 │
+├─────────────┼──────────────────────────────────────────────────────────────┤
+│ PHPSTAN     │ composer phpstan                                             │
+│             │ Rule configured in phpstan-extension.neon                    │
+├─────────────┼──────────────────────────────────────────────────────────────┤
+│ SCRIPT      │ ./vendor/team-mate-pro/tmp-standards/definitions/            │
+│             │    {category}/{STANDARD_ID}.sh                               │
+├─────────────┼──────────────────────────────────────────────────────────────┤
+│ AI          │ claude -p "$(cat vendor/team-mate-pro/tmp-standards/         │
+│             │    definitions/{category}/{STANDARD_ID}.prompt.txt)"         │
+│             │    --cwd .                                                   │
+├─────────────┼──────────────────────────────────────────────────────────────┤
+│ MANUAL      │ Human review required - see standard definition              │
+└─────────────┴──────────────────────────────────────────────────────────────┘
+```
+
 ## Project Structure
 
 ```
@@ -55,11 +77,11 @@ Each standard definition should clearly specify:
 
 ### Available Standards
 
-| Code | Title | Description |
-|------|-------|-------------|
-| [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | Required Makefile commands: `start`, `stop`, `fast`, `check` |
-| [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) | UseCase Parameters Must Be Interfaces | UseCase `__invoke()` parameters must be interfaces or scalar types |
-| [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) | UseCase Must Have Invoke Method | Every UseCase class must have an `__invoke()` method |
+| Code | Title | Check Method |
+|------|-------|--------------|
+| [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | SCRIPT |
+| [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) | UseCase Parameters Must Be Interfaces | PHPSTAN |
+| [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) | UseCase Must Have Invoke Method | PHPSTAN |
 
 ## Validation Scripts
 

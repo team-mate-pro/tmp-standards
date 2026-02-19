@@ -1,5 +1,13 @@
 # UCB-001: UseCase Parameters Must Be Interfaces
 
+## Check Method
+
+| Method | Command |
+|--------|---------|
+| **PHPSTAN** | `composer phpstan` |
+
+**Rule:** `UseCaseParameterMustBeInterfaceRule` in `phpstan-extension.neon`
+
 ## Definition
 
 Every UseCase class `__invoke()` method must accept **interfaces** or **scalar types** as parameters. Concrete classes (Command, Request, DTO) are **not allowed** as parameter types.
