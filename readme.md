@@ -6,9 +6,13 @@ A Composer package aggregating coding standards, architectural guidelines, and P
 
 ```
 tmp-standards/
-├── definitions/                    # Standard definitions (markdown)
+├── definitions/                    # Standard definitions (markdown + scripts)
+│   ├── infrastructure/
+│   │   ├── INF-001-infrastructure-local-makefile.md
+│   │   └── INF-001-infrastructure-local-makefile.sh  # Validation script
 │   └── use-case-bundle/
-│       └── UCB-001-use-case-abstract-dto.md
+│       ├── UCB-001-use-case-abstract-dto.md
+│       └── UCB-002-use-case-invoke-method.md
 ├── src/                            # Source code
 │   └── PHPStan/
 │       └── Rules/
@@ -38,6 +42,7 @@ The standard name can be extended with a longer description.
 
 | Prefix | Category |
 |--------|----------|
+| `INF`  | Infrastructure - local development, CI/CD, tooling |
 | `UCB`  | UseCase Bundle - rules for UseCase pattern |
 
 ### Requirements
@@ -52,8 +57,35 @@ Each standard definition should clearly specify:
 
 | Code | Title | Description |
 |------|-------|-------------|
+| [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | Required Makefile commands: `start`, `stop`, `fast`, `check` |
 | [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) | UseCase Parameters Must Be Interfaces | UseCase `__invoke()` parameters must be interfaces or scalar types |
 | [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) | UseCase Must Have Invoke Method | Every UseCase class must have an `__invoke()` method |
+
+## Validation Scripts
+
+Some standards include validation scripts that can be run to check project compliance.
+
+### INF-001: Makefile Validator
+
+Validates that your project's Makefile conforms to INF-001 standard.
+
+```bash
+# Run from project root
+./vendor/team-mate-pro/tmp-standards/definitions/infrastructure/INF-001-infrastructure-local-makefile.sh
+
+# Or specify a different path
+./vendor/team-mate-pro/tmp-standards/definitions/infrastructure/INF-001-infrastructure-local-makefile.sh /path/to/project
+```
+
+**What it checks:**
+- Required targets: `start`, `stop`, `fast`, `check`
+- Recommended targets: `help`, `check_fast`, `fix`, `tests`
+- Required variables: `docker-compose`, `main-container-name`, `vendor-dir`
+- Optional include syntax (`-include`)
+- Self-documenting `###` comments
+- Common aliases (`c`, `cf`, `f`, `t`)
+
+**Exit codes:** `0` = passed, `1` = failed
 
 ## PHPStan
 
