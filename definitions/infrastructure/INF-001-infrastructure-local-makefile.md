@@ -1,5 +1,7 @@
 # INF-001: Local Development Makefile Standard
 
+**Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/infrastructure/INF-001-infrastructure-local-makefile.md
+
 ## Check Method
 
 | Method | Command |

@@ -1,5 +1,7 @@
 # CC-001: No Persistence in Creational Patterns
 
+**Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/clean-code/CC-001-no-persist-in-creational-patterns.md
+
 ## Check Method
 
 | Method | Command |

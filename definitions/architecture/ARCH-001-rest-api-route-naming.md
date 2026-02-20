@@ -1,5 +1,7 @@
 # ARCH-001: REST API Route Naming Convention
 
+**Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/architecture/ARCH-001-rest-api-route-naming.md
+
 ## Check Method
 
 | Method | Command |

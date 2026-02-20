@@ -1,5 +1,7 @@
 # UCB-001: UseCase Parameters Must Be Interfaces
 
+**Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md
+
 ## Check Method
 
 | Method | Command |

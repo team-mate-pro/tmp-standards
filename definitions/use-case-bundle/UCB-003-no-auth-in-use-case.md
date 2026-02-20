@@ -1,5 +1,7 @@
 # UCB-003: No Authorization Decisions in UseCase Layer
 
+**Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-003-no-auth-in-use-case.md
+
 ## Check Method
 
 | Method | Command |

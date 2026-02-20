@@ -1,5 +1,7 @@
 # TEST-001: Unified PHPUnit Test Structure
 
+**Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/tests/TEST-001-unified-phpunit-structure.md
+
 ## Check Method
 
 | Method | Command |
