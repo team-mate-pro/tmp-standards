@@ -1,0 +1,70 @@
+Check if the codebase follows UCB-004: Controller Must Use $this->response() Method.
+
+RULE: Controllers extending AbstractRestApiController MUST use $this->response() method to return JSON responses. Manual JSON array construction with $this->json() is STRICTLY FORBIDDEN. This is a CRITICAL anti-pattern that breaks architectural consistency.
+
+SEARCH FOR VIOLATIONS:
+1. Find all Controller classes extending AbstractRestApiController
+2. Check for forbidden patterns:
+   - $this->json([...]) with manual array construction
+   - return new JsonResponse([...]) with manual arrays
+   - Repository injection directly into controller action (business logic leak)
+   - Manual field mapping like 'id' => $entity->getId()
+3. Check for missing UseCase delegation:
+   - Controller action without UseCase parameter
+   - Direct repository calls in controller
+
+CORRECT PATTERN:
+```php
+#[Route('/api/resources/{id}', methods: ['GET'])]
+public function getAction(
+    GetResourceRequest $request,
+    GetResourceUseCase $useCase,
+): JsonResponse {
+    return $this->response(
+        result: $useCase($request),
+        serializationGroups: ['resource:read'],
+    );
+}
+```
+
+VIOLATION PATTERNS (CRITICAL - MUST BE REFACTORED):
+```php
+// VIOLATION 1: Manual JSON construction
+return $this->json([
+    'id' => $entity->getId(),
+    'name' => $entity->getName(),
+]);
+
+// VIOLATION 2: Repository in controller
+public function getAction(
+    Request $request,
+    EntityRepositoryInterface $repository  // WRONG: Repository in controller
+): JsonResponse {
+    $entity = $repository->find($id);
+    return $this->json(['data' => $entity]);
+}
+
+// VIOLATION 3: Manual status code without Result
+return $this->json(['error' => 'Not found'], 404);
+```
+
+WHY THIS IS CRITICAL:
+1. Breaks consistent response envelope structure
+2. Breaks consistent HTTP status code mapping (ResultType -> HTTP Status)
+3. Duplicates serialization logic across controllers
+4. Leaks business logic into presentation layer
+5. Cannot leverage serialization groups for field visibility
+6. Maintenance nightmare - field changes require multiple file edits
+7. Testing becomes harder - cannot test serialization in isolation
+
+ACCEPTABLE EXCEPTIONS:
+- Health check endpoints (/health, /ready)
+- Webhook callbacks with externally-defined format
+- Legacy endpoints explicitly marked @deprecated
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the problematic code snippet
+- Explain why it violates the standard (manual json, repository leak, etc.)
+- Severity: CRITICAL - must be refactored
+- Mark as PASS if no violations found
