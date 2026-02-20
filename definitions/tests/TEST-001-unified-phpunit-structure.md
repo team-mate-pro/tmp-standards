@@ -220,8 +220,32 @@ This standard requires:
 - `phpunit/phpunit` - test framework
 - `dama/doctrine-test-bundle` - database transaction rollback (recommended)
 
+### Installing tests-bundle
+
+The `team-mate-pro/tests-bundle` is a public package available on Packagist:
+
+```bash
+composer require --dev team-mate-pro/tests-bundle
+```
+
+**Repository:** https://github.com/team-mate-pro/tests-bundle
+
+### Installing all dependencies
+
 ```bash
 composer require --dev team-mate-pro/tests-bundle phpunit/phpunit dama/doctrine-test-bundle
+```
+
+### What tests-bundle provides
+
+The bundle includes `tools/run-if-modified.sh` script that:
+- Tracks file changes using checksums stored in `/tmp`
+- Only executes commands when watched directories change
+- Significantly speeds up test runs by skipping unnecessary migrations/fixtures
+
+**Usage pattern:**
+```bash
+./vendor/team-mate-pro/tests-bundle/tools/run-if-modified.sh "command to run" ./directory/to/watch
 ```
 
 ## Validation Script
