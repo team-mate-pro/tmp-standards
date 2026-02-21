@@ -32,6 +32,18 @@ tmp-standards/
 │   ├── clean-code/
 │   │   ├── CC-001-no-persist-in-creational-patterns.md
 │   │   └── CC-001-no-persist-in-creational-patterns.prompt.txt  # AI prompt
+│   ├── design-patterns/
+│   │   └── solid/
+│   │       ├── SOLID-001-single-responsibility-principle.md
+│   │       ├── SOLID-001-single-responsibility-principle.prompt.txt
+│   │       ├── SOLID-002-open-closed-principle.md
+│   │       ├── SOLID-002-open-closed-principle.prompt.txt
+│   │       ├── SOLID-003-liskov-substitution-principle.md
+│   │       ├── SOLID-003-liskov-substitution-principle.prompt.txt
+│   │       ├── SOLID-004-interface-segregation-principle.md
+│   │       ├── SOLID-004-interface-segregation-principle.prompt.txt
+│   │       ├── SOLID-005-dependency-inversion-principle.md
+│   │       └── SOLID-005-dependency-inversion-principle.prompt.txt
 │   ├── infrastructure/
 │   │   ├── INF-001-infrastructure-local-makefile.md
 │   │   └── INF-001-infrastructure-local-makefile.sh  # Validation script
@@ -69,6 +81,7 @@ The standard name can be extended with a longer description.
 |--------|----------|
 | `CC`   | Clean Code - general coding best practices |
 | `INF`  | Infrastructure - local development, CI/CD, tooling |
+| `SOLID` | Design Patterns - SOLID principles |
 | `UCB`  | UseCase Bundle - rules for UseCase pattern |
 
 ### Requirements
@@ -85,6 +98,11 @@ Each standard definition should clearly specify:
 |------|-------|--------------|
 | [CC-001](definitions/clean-code/CC-001-no-persist-in-creational-patterns.md) | No Persistence in Creational Patterns | AI |
 | [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | SCRIPT |
+| [SOLID-001](definitions/design-patterns/solid/SOLID-001-single-responsibility-principle.md) | Single Responsibility Principle (SRP) | AI |
+| [SOLID-002](definitions/design-patterns/solid/SOLID-002-open-closed-principle.md) | Open/Closed Principle (OCP) | AI |
+| [SOLID-003](definitions/design-patterns/solid/SOLID-003-liskov-substitution-principle.md) | Liskov Substitution Principle (LSP) | AI |
+| [SOLID-004](definitions/design-patterns/solid/SOLID-004-interface-segregation-principle.md) | Interface Segregation Principle (ISP) | AI |
+| [SOLID-005](definitions/design-patterns/solid/SOLID-005-dependency-inversion-principle.md) | Dependency Inversion Principle (DIP) | AI |
 | [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) | UseCase Parameters Must Be Interfaces | PHPSTAN |
 | [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) | UseCase Must Have Invoke Method | PHPSTAN |
 

@@ -1,0 +1,28 @@
+Check if the codebase follows SOLID-005: Dependency Inversion Principle (DIP).
+
+RULE: High-level modules should not depend on low-level modules. Both should depend on abstractions (interfaces). Constructor parameters should use interfaces, not concrete classes. Avoid using EntityManager directly in controllers and services.
+
+SEARCH FOR VIOLATIONS:
+1. Find constructor parameters that type-hint concrete classes instead of interfaces (especially repositories and services)
+2. Look for direct usage of EntityManagerInterface::getRepository() in controllers or services
+3. Find services that inject HttpClientInterface directly with API config values (apiToken, baseUrl) instead of using an API client abstraction
+4. Look for "new" keyword used to instantiate service/repository objects inside other classes
+5. Check controllers that inject concrete repository classes instead of repository interfaces
+
+INDICATORS OF VIOLATION:
+- __construct(private OrderRepository $repo) instead of __construct(private OrderRepositoryInterface $repo)
+- $this->entityManager->getRepository(SomeEntity::class)->findBy(...)
+- Constructor with mix of service interfaces and raw config strings (apiToken, baseUrl, departmentId)
+- new SomeService() inside a method instead of constructor injection
+
+CORRECT PATTERN:
+- All service/repository dependencies injected via interfaces
+- EntityManager usage confined to repository classes only
+- API client details behind an abstraction (e.g., ExternalInvoiceClientInterface)
+- Configuration grouped into value objects, not scattered as constructor parameters
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the problematic constructor or method
+- Suggest which interface should replace the concrete dependency
+- Mark as PASS if no violations found

@@ -1,0 +1,28 @@
+Check if the codebase follows SOLID-004: Interface Segregation Principle (ISP).
+
+RULE: Clients should not be forced to depend on interfaces they do not use. Prefer small, role-specific interfaces over large "fat" interfaces. A class implementing many unrelated interfaces is a red flag.
+
+SEARCH FOR VIOLATIONS:
+1. Find classes that implement more than 3-4 interfaces (excluding framework/marker interfaces)
+2. Look for interfaces with more than 5 methods - potential fat interfaces
+3. Find interface methods that are implemented as empty bodies or throw "not implemented/supported" exceptions
+4. Look for a single repository class implementing both CRUD and statistical/reporting interfaces
+5. Check if consumers depend on large interfaces but only use 1-2 methods from them
+
+INDICATORS OF VIOLATION:
+- class Foo implements A, B, C, D, E, F, G (many unrelated interfaces)
+- throw new \BadMethodCallException('Not implemented') in an interface method
+- Interface has method groups that serve different concerns
+- Repository implementing both write (save/delete) and read/stats interfaces
+
+CORRECT PATTERN:
+- Interfaces with 1-4 focused methods
+- Separate interfaces per role/concern
+- CQRS: separate read interfaces (queries) from write interfaces (commands)
+- Consumers depend only on the interface they actually use
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the interface list or fat interface definition
+- Explain which interfaces/methods are unrelated
+- Mark as PASS if no violations found

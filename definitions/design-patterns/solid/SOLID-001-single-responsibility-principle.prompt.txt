@@ -1,0 +1,28 @@
+Check if the codebase follows SOLID-001: Single Responsibility Principle (SRP).
+
+RULE: Each class should have only one reason to change. Classes must not mix unrelated concerns such as persistence, notifications, external API integration, template management, and business logic.
+
+SEARCH FOR VIOLATIONS:
+1. Find classes with more than 300 lines or more than 15 public methods - potential god classes
+2. Look for entity classes that contain fields/methods for multiple unrelated domains (e.g., Fakturownia sync fields in an Order entity)
+3. Find service classes that handle multiple notification types or multiple unrelated operations
+4. Look for classes with many unrelated constants (e.g., templates for messages AND invoices AND attachments)
+5. Check for classes using multiple traits that represent different concerns
+
+INDICATORS OF VIOLATION:
+- Class has methods grouped by different concerns (e.g., sendMessage*, sendAttachment*, sendInvoice*)
+- Entity has fields for external system sync (e.g., fakturowniaId, syncedAt) alongside core domain fields
+- Class handles both reading and writing for unrelated features
+- Multiple groups of constants serving different purposes
+
+CORRECT PATTERN:
+- One class = one concern = one reason to change
+- Entity contains only its domain data and invariants
+- External system integration in dedicated services
+- Notification types split into separate services
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the problematic code snippet
+- Explain which multiple responsibilities were detected
+- Mark as PASS if no violations found

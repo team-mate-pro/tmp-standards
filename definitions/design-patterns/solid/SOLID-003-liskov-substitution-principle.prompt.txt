@@ -1,0 +1,29 @@
+Check if the codebase follows SOLID-003: Liskov Substitution Principle (LSP).
+
+RULE: Subtypes must be substitutable for their base types without altering correctness. Subclasses/implementations must honor the contract (preconditions, postconditions, invariants) of their parent type/interface.
+
+SEARCH FOR VIOLATIONS:
+1. Find classes that implement interfaces but throw "not implemented" or "not supported" exceptions
+2. Look for method overrides that weaken postconditions (e.g., returning null/empty where parent guarantees a value)
+3. Find subclasses that throw unexpected exception types not declared in the parent
+4. Look for classes implementing many unrelated interfaces (>5), making substitution impractical
+5. Check for instanceof/get_class checks on interface-typed parameters (signals broken substitutability)
+
+INDICATORS OF VIOLATION:
+- throw new \RuntimeException('Not implemented') in an interface method
+- Returning empty/null where the interface documents a non-null return
+- Catching a parent's declared exception and throwing a different one
+- A single class implementing interfaces from unrelated domains
+- Using instanceof checks to determine which "real" implementation was passed
+
+CORRECT PATTERN:
+- Every interface implementation honors the full contract
+- Exceptions match what the interface declares
+- Return values match documented postconditions
+- Interfaces are small and cohesive (see also ISP)
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the problematic code snippet
+- Explain how the contract is broken
+- Mark as PASS if no violations found

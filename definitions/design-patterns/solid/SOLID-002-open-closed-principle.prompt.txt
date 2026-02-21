@@ -1,0 +1,28 @@
+Check if the codebase follows SOLID-002: Open/Closed Principle (OCP).
+
+RULE: Classes should be open for extension but closed for modification. Avoid switch/if-else chains that dispatch behavior based on type, action, or status. Use polymorphism, strategy pattern, or handler registries instead.
+
+SEARCH FOR VIOLATIONS:
+1. Find switch statements that dispatch to different methods based on a string/enum value
+2. Find if-else chains (3+ branches) that check types, statuses, or actions to select behavior
+3. Look for methods with multiple str_contains/preg_match checks mapping values to types
+4. Find Command classes that use switch on an "action" argument
+5. Look for services that build results conditionally based on customer/entity type
+
+INDICATORS OF VIOLATION:
+- switch($action) { case 'create': ... case 'update': ... }
+- if ($type === 'foo') { ... } elseif ($type === 'bar') { ... }
+- Multiple str_contains() checks returning different mapped values
+- Conditional blocks that would need modification to add new behavior
+
+CORRECT PATTERN:
+- Handler registry: iterable<HandlerInterface> with supports() method
+- Strategy pattern: interface with multiple implementations
+- Map-based approach: array/config mapping values to results
+- Enum methods: behavior encapsulated in enum cases
+
+OUTPUT FORMAT:
+- List files that violate the standard with line numbers
+- Show the problematic code snippet
+- Suggest which pattern would fix the violation
+- Mark as PASS if no violations found
