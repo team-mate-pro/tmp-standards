@@ -49,10 +49,14 @@ tmp-standards/
 │   │   └── INF-001-infrastructure-local-makefile.sh  # Validation script
 │   └── use-case-bundle/
 │       ├── UCB-001-use-case-abstract-dto.md
-│       └── UCB-002-use-case-invoke-method.md
+│       ├── UCB-002-use-case-invoke-method.md
+│       ├── UCB-003-no-auth-in-use-case.md
+│       ├── UCB-004-controller-must-use-response-method.md
+│       └── UCB-005-controller-action-method-suffix.md
 ├── src/                            # Source code
 │   └── PHPStan/
 │       └── Rules/
+│           ├── ControllerActionMethodSuffixRule.php
 │           ├── UseCaseMustHaveInvokeMethodRule.php
 │           └── UseCaseParameterMustBeInterfaceRule.php
 ├── tests/                          # PHPUnit tests
@@ -105,6 +109,9 @@ Each standard definition should clearly specify:
 | [SOLID-005](definitions/design-patterns/solid/SOLID-005-dependency-inversion-principle.md) | Dependency Inversion Principle (DIP) | AI |
 | [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) | UseCase Parameters Must Be Interfaces | PHPSTAN |
 | [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) | UseCase Must Have Invoke Method | PHPSTAN |
+| [UCB-003](definitions/use-case-bundle/UCB-003-no-auth-in-use-case.md) | No Authorization in UseCase Layer | AI |
+| [UCB-004](definitions/use-case-bundle/UCB-004-controller-must-use-response-method.md) | Controller Must Use $this->response() | MANUAL |
+| [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md) | Controller Action Methods Must Have "Action" Suffix | PHPSTAN |
 
 ## Validation Scripts
 
@@ -174,6 +181,48 @@ includes:
 |------|------------|----------|
 | `UseCaseMustHaveInvokeMethodRule` | `useCase.missingInvoke` | [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) |
 | `UseCaseParameterMustBeInterfaceRule` | `useCase.parameterMustBeInterface` | [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) |
+| `ControllerActionMethodSuffixRule` | `controller.actionMethodSuffix` | [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md) |
+
+### Disabling Rules
+
+All rules are auto-discovered via `phpstan/extension-installer`. If you need to skip a specific rule in your project, disable it in your `phpstan.neon` using the `ignoreErrors` parameter with the rule identifier:
+
+```neon
+parameters:
+    ignoreErrors:
+        # Disable a rule entirely
+        -
+            identifier: controller.actionMethodSuffix
+
+        # Disable a rule for specific paths
+        -
+            identifier: useCase.missingInvoke
+            paths:
+                - src/Legacy/*
+
+        # Disable a rule with a message pattern
+        -
+            identifier: useCase.parameterMustBeInterface
+            message: '#UseCase "Legacy.*" parameter#'
+```
+
+Available rule identifiers:
+
+| Identifier | Rule |
+|------------|------|
+| `useCase.missingInvoke` | `UseCaseMustHaveInvokeMethodRule` |
+| `useCase.parameterMustBeInterface` | `UseCaseParameterMustBeInterfaceRule` |
+| `controller.actionMethodSuffix` | `ControllerActionMethodSuffixRule` |
+
+You can also ignore errors inline with PHPStan comments:
+
+```php
+/** @phpstan-ignore controller.actionMethodSuffix */
+public function legacyEndpoint(): JsonResponse
+{
+    // ...
+}
+```
 
 ### Rule Details
 
@@ -219,6 +268,29 @@ public function __invoke(CreateUserRequest $request): Result
 ```
 
 See [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) for detailed documentation.
+
+#### ControllerActionMethodSuffixRule
+
+Public methods in controllers extending `AbstractRestApiController` must end with the `Action` suffix. Private, protected, static, and magic methods are exempt.
+
+```php
+// CORRECT - public methods have "Action" suffix
+final class ShopController extends AbstractRestApiController
+{
+    public function getShopAction(): JsonResponse { /* ... */ }
+    public function createShopAction(): JsonResponse { /* ... */ }
+
+    private function logPayload(): void { /* ... */ } // exempt
+}
+
+// VIOLATION - missing "Action" suffix
+final class CustomerController extends AbstractRestApiController
+{
+    public function importAllExternalCustomers(): JsonResponse { /* ... */ }
+}
+```
+
+See [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md) for detailed documentation.
 
 ## Development
 
