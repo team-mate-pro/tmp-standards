@@ -10,7 +10,7 @@
 
 ## Definition
 
-Tests must focus on **observable behaviors** (inputs → outputs, state changes, side effects) rather than implementation details. Every test method must follow the **Given-When-Then** structure expressed through both the method name and inline comments. Tests should be organized into logical **comment blocks** that group related scenarios.
+Tests must focus on **observable behaviors** (inputs → outputs, state changes, side effects) rather than implementation details. Every test method must have a **descriptive camelCase name** (no underscores, no spaces) and use the **Given-When-Then** structure in **inline comments only** (not in the method name). Tests should be organized into logical **comment blocks** that group related scenarios.
 
 ## Applies To
 
@@ -21,31 +21,30 @@ Tests must focus on **observable behaviors** (inputs → outputs, state changes,
 
 ### 1. Method Naming — Readable as a Sentence
 
-Test methods must use the `given_when_then` pattern in camelCase and be **descriptive enough to read like a specification**. When PHPUnit runs with `--testdox`, the output should read like a book describing how the system works.
+Test method names must be **pure camelCase without underscores or spaces**. They must be descriptive enough that PHPUnit `--testdox` output reads like a book describing how the system works.
 
-```
-given{DetailedPrecondition}_when{SpecificAction}_then{ObservableOutcome}
-```
-
-The method name must answer three questions in plain language:
-- **Given**: What is the starting state? (include the entity and its relevant condition)
-- **When**: What action or event triggers the behavior?
-- **Then**: What is the observable result from a business perspective?
+The `given`, `when`, `then` keywords are **NOT allowed** in method names — they belong only in inline comments (see Rule 2). The method name itself should be a natural, descriptive sentence in camelCase.
 
 **Good** — reads like documentation:
 ```
-givenNewOrderWithAddressWithoutCoordinates_whenPersisted_thenGeocodesAndSetsCoordinates
-givenNewOrderWithAddressThatAlreadyHasCoordinates_whenPersisted_thenSkipsGeocodingAndKeepsOriginal
-givenPendingOrder_whenPaid_thenChangesStatusToPaidAndDispatchesPaymentReceivedEvent
-givenExpiredPromoCode_whenAppliedToCart_thenThrowsPromoCodeExpiredException
+newOrderWithAddressGetsGeocodedCoordinatesOnPersist
+orderWithExistingCoordinatesKeepsOriginalOnPersist
+orderWithoutDeliveryAddressIsIgnoredOnPersist
+geocodingFailureNullifiesCoordinatesAndLogsWarning
+zeroCoordinatesTriggerReGeocodingOnPersist
+updatedOrderWithoutCoordinatesGetsGeocodedAndChangesetRecomputed
+paidOrderChangesStatusAndDispatchesPaymentReceivedEvent
+expiredPromoCodeThrowsExceptionWhenAppliedToCart
 ```
 
-**Bad** — too vague, no business context:
+**Bad** — underscores, GWT keywords in name, or too vague:
 ```
-testGeocode                              // what scenario? what outcome?
-givenOrder_whenPersisted_thenWorks       // "works" means nothing
-givenAddress_whenCall_thenReturnsResult  // what address? what call? what result?
-testCoordinatesAreSet                    // no GWT, no scenario context
+givenNewOrder_whenPersisted_thenWorks         // underscores + GWT keywords in name
+given_order_when_persisted_then_works         // snake_case
+testGeocode                                   // says nothing about scenario
+testCoordinatesAreSet                         // no context, "test" prefix
+coordinatesWork                               // "work" is meaningless
+processOrder                                  // what about the order? what outcome?
 ```
 
 The goal: a new developer running `composer tests:unit` should understand the system's business rules **just by reading the test output**, without opening a single test file.
@@ -81,14 +80,14 @@ When tests are run with `--testdox`, the output should read like a behavioral sp
 
 ```
 Address Coordinates Listener (App\Tests\Unit\EventListener\AddressCoordinatesListener)
- ✔ Given new order with address without coordinates when persisted then geocodes and sets coordinates
- ✔ Given new order with address that already has coordinates when persisted then skips geocoding and keeps original
- ✔ Given new order without delivery address when persisted then does nothing
- ✔ Given new order with address when geocoding returns null then nullifies coordinates and logs warning
- ✔ Given new order with address when geocoding returns zero zero then nullifies coordinates and logs warning
- ✔ Given new order with address that has zero coordinates when persisted then tries to geocode again
- ✔ Given existing order whose address has no coordinates when updated then geocodes and recomputes changeset
- ✔ Given existing order with valid coordinates when updated without address change then skips geocoding
+ ✔ New order with address gets geocoded coordinates on persist
+ ✔ Order with existing coordinates keeps original on persist
+ ✔ Order without delivery address is ignored on persist
+ ✔ Geocoding failure nullifies coordinates and logs warning
+ ✔ Geocoding returning zero zero nullifies coordinates and logs warning
+ ✔ Zero coordinates trigger re geocoding on persist
+ ✔ Updated order without coordinates gets geocoded and changeset recomputed
+ ✔ Updated order with valid coordinates skips geocoding when address unchanged
 ```
 
 Reading this output top-to-bottom tells you:
@@ -119,7 +118,7 @@ final class AddressCoordinatesListenerTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function givenNewOrderWithAddressWithoutCoordinates_whenPersisted_thenGeocodesAndSetsCoordinates(): void
+    public function newOrderWithAddressGetsGeocodedCoordinatesOnPersist(): void
     {
         // Given: a new order with a delivery address but no coordinates
         $address = new Address(street: 'Test 1', city: 'Warszawa', zipCode: '00-001', country: 'PL');
@@ -137,7 +136,7 @@ final class AddressCoordinatesListenerTest extends TestCase
     }
 
     #[Test]
-    public function givenNewOrderWithAddressThatAlreadyHasCoordinates_whenPersisted_thenSkipsGeocodingAndKeepsOriginal(): void
+    public function orderWithExistingCoordinatesKeepsOriginalOnPersist(): void
     {
         // Given: a new order with a delivery address that already has coordinates
         $address = new Address(
@@ -165,7 +164,7 @@ final class AddressCoordinatesListenerTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function givenNewOrderWithAddress_whenGeocodingReturnsNull_thenNullifiesCoordinatesAndLogsWarning(): void
+    public function geocodingFailureNullifiesCoordinatesAndLogsWarning(): void
     {
         // Given: a new order with a delivery address but no coordinates
         $address = new Address(street: 'Test 1', city: 'Warszawa', zipCode: '00-001', country: 'PL');
@@ -232,28 +231,50 @@ Address Coordinates Listener
 ```
 Compare with the correct version — no business knowledge conveyed at all.
 
+### Underscores and GWT keywords in method name
+
+```php
+// WRONG: underscores act as spaces, given/when/then belong in comments only
+#[Test]
+public function givenNewOrder_whenPersisted_thenGeocodesAddress(): void { /* ... */ }
+#[Test]
+public function given_order_when_paid_then_status_changes(): void { /* ... */ }
+```
+
+**Problems:**
+- Underscores are not allowed in method names
+- `given`, `when`, `then` keywords pollute the method name — they belong in inline comments only
+
+**Correct:**
+```php
+#[Test]
+public function newOrderGetsGeocodedAddressOnPersist(): void { /* ... */ }
+#[Test]
+public function paidOrderChangesStatusToPaid(): void { /* ... */ }
+```
+
 ### Vague, non-descriptive method names
 
 ```php
-// WRONG: names are technically GWT but too vague to be useful
+// WRONG: names are too vague to be useful
 #[Test]
-public function givenOrder_whenPersisted_thenWorks(): void { /* ... */ }
+public function orderWorks(): void { /* ... */ }
 #[Test]
-public function givenAddress_whenCall_thenReturnsResult(): void { /* ... */ }
+public function addressReturnsResult(): void { /* ... */ }
 #[Test]
-public function givenData_whenProcessed_thenCorrect(): void { /* ... */ }
+public function dataIsProcessedCorrectly(): void { /* ... */ }
 ```
 
 **Testdox output tells you nothing:**
 ```
- ✔ Given order when persisted then works
- ✔ Given address when call then returns result
- ✔ Given data when processed then correct
+ ✔ Order works
+ ✔ Address returns result
+ ✔ Data is processed correctly
 ```
 
 **Problems:**
-- "works", "returns result", "correct" — these are meaningless assertions
-- No specifics about _which_ order state, _what_ call, _what_ result
+- "works", "returns result", "correctly" — these are meaningless assertions
+- No specifics about _which_ order state, _what_ address scenario, _what_ result
 - A failing test gives zero context about what business rule broke
 
 ### Testing implementation instead of behavior
@@ -261,7 +282,7 @@ public function givenData_whenProcessed_thenCorrect(): void { /* ... */ }
 ```php
 // WRONG: testing internal implementation details
 #[Test]
-public function givenOrder_whenPersisted_thenCallsFindCoordinatesExactlyOnceWithCorrectArguments(): void
+public function persistedOrderCallsFindCoordinatesExactlyOnceWithCorrectArguments(): void
 {
     $address = new Address(street: 'Test 1', city: 'Warszawa', zipCode: '00-001', country: 'PL');
     $order = $this->createOrderWithAddress($address);
@@ -291,15 +312,15 @@ final class OrderServiceTest extends TestCase
 {
     // WRONG: all tests dumped in a flat list without grouping
     #[Test]
-    public function givenNewOrder_whenCreated_thenHasPendingStatus(): void { /* ... */ }
+    public function newOrderHasPendingStatus(): void { /* ... */ }
     #[Test]
-    public function givenPendingOrder_whenPaid_thenHasPaidStatus(): void { /* ... */ }
+    public function paidOrderChangesStatusToPaid(): void { /* ... */ }
     #[Test]
-    public function givenPaidOrder_whenShipped_thenHasShippedStatus(): void { /* ... */ }
+    public function shippedOrderChangesStatusToShipped(): void { /* ... */ }
     #[Test]
-    public function givenNewOrder_whenCreatedWithInvalidEmail_thenThrowsException(): void { /* ... */ }
+    public function orderWithInvalidEmailThrowsException(): void { /* ... */ }
     #[Test]
-    public function givenPendingOrder_whenCancelled_thenHasCancelledStatus(): void { /* ... */ }
+    public function cancelledPendingOrderChangesStatusToCancelled(): void { /* ... */ }
 }
 ```
 
@@ -313,30 +334,30 @@ final class OrderServiceTest extends TestCase
     // ==========================================
 
     #[Test]
-    public function givenNewOrder_whenCreated_thenHasPendingStatus(): void { /* ... */ }
+    public function newOrderHasPendingStatus(): void { /* ... */ }
     #[Test]
-    public function givenNewOrder_whenCreatedWithInvalidEmail_thenThrowsException(): void { /* ... */ }
+    public function orderWithInvalidEmailThrowsException(): void { /* ... */ }
 
     // ==========================================
     // Order payment
     // ==========================================
 
     #[Test]
-    public function givenPendingOrder_whenPaid_thenHasPaidStatus(): void { /* ... */ }
+    public function paidOrderChangesStatusToPaid(): void { /* ... */ }
 
     // ==========================================
     // Order shipping
     // ==========================================
 
     #[Test]
-    public function givenPaidOrder_whenShipped_thenHasShippedStatus(): void { /* ... */ }
+    public function shippedOrderChangesStatusToShipped(): void { /* ... */ }
 
     // ==========================================
     // Order cancellation
     // ==========================================
 
     #[Test]
-    public function givenPendingOrder_whenCancelled_thenHasCancelledStatus(): void { /* ... */ }
+    public function cancelledPendingOrderChangesStatusToCancelled(): void { /* ... */ }
 }
 ```
 
