@@ -1,0 +1,32 @@
+Check if the codebase follows ARCH-002: No Content Format in Route Paths.
+
+RULE: Route paths must identify resources, not their representation format.
+Content format must be negotiated via Accept header, not encoded in URL.
+
+SEARCH FOR VIOLATIONS:
+1. Find all Controller classes with #[Route] attributes
+2. Check route paths for format indicators:
+   - Format suffixes: -pdf, -csv, -xlsx, -xml, -html, -doc
+   - Format actions: /export-csv, /download-pdf, /generate-pdf, /as-pdf, /to-csv, /generate-xlsx
+   - Format sub-paths: /pdf, /csv, /excel (when referring to format, not resource)
+3. Check route names for format indicators (e.g. name: 'api_order_generate_cmr_pdf')
+
+CORRECT PATTERNS:
+- POST /api/orders/{id}/cmr + Accept: application/pdf → generates CMR as PDF
+- GET /api/reports/{id} + Accept: text/csv → report as CSV
+- GET /api/invoices/{id} + Accept: application/pdf → invoice as PDF
+- Resource sub-paths like /cmr, /invoice are valid (they identify resources, not formats)
+
+VIOLATION PATTERNS:
+- /orders/{id}/cmr-pdf (format in path)
+- /api/reports/{id}/export-csv (format action in path)
+- /api/invoices/{id}/download-pdf (format action in path)
+- /api/settlements/{id}/generate-xlsx (format action in path)
+- Route name containing format: 'api_order_generate_cmr_pdf'
+
+OUTPUT FORMAT:
+- List files with line numbers
+- Show the problematic route definition
+- Explain what format indicator is embedded in the path
+- Suggest correct alternative using Accept header
+- Mark as PASS if no violations found
