@@ -151,6 +151,10 @@ final class UseCaseParameterMustBeInterfaceRule implements Rule
                 $paramName,
                 $resolvedName
             )
-        )->identifier('useCase.parameterMustBeInterface')->line($param->getStartLine())->build();
+        )
+            ->identifier('useCase.parameterMustBeInterface')
+            ->tip('See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md')
+            ->line($param->getStartLine())
+            ->build();
     }
 }

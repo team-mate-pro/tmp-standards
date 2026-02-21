@@ -82,7 +82,11 @@ final class ControllerActionMethodSuffixRule implements Rule
                     $methodName,
                     $methodName,
                 )
-            )->identifier('controller.actionMethodSuffix')->line($method->getStartLine())->build();
+            )
+                ->identifier('controller.actionMethodSuffix')
+                ->tip('See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md')
+                ->line($method->getStartLine())
+                ->build();
         }
 
         return $errors;
