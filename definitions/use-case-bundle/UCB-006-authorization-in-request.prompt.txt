@@ -1,0 +1,59 @@
+Check if the codebase follows UCB-006: Authorization Must Be Handled in Request Class.
+
+RULE: Authorization checks must be in Request class via securityCheck() method, NOT in Controller. Controllers must NOT call denyAccessUnlessGranted() or perform manual security checks.
+
+SEARCH FOR VIOLATIONS:
+
+1. Find all Controller classes extending AbstractRestApiController
+2. Check controller methods for forbidden calls:
+   - $this->denyAccessUnlessGranted()
+   - $this->security->isGranted()
+   - $this->isGranted()
+3. If controller has authorization calls, check if the corresponding Request class has securityCheck() method
+4. Flag any controller with inline authorization checks
+
+CORRECT PATTERN:
+- Request class extends AbstractDecoratedRequest or AbstractValidatedRequest
+- Request class implements securityCheck(): bool method
+- securityCheck() calls $this->security->isGranted(Permission::*, [...subjects])
+- Controller action receives Request and UseCase, calls UseCase, returns response
+- Controller has NO authorization logic
+
+VIOLATION PATTERN:
+- Controller calls $this->denyAccessUnlessGranted(Permission::*, [...])
+- Controller uses $this->security->isGranted() for permission checks
+- Controller throws AccessDeniedException based on permission logic
+- Request class is missing securityCheck() method while controller has auth checks
+
+OUTPUT FORMAT:
+- List Controller files that violate the standard with line numbers
+- Show the problematic code snippet (the denyAccessUnlessGranted or isGranted call)
+- Identify which Request class should have the securityCheck() method
+- Provide the suggested securityCheck() implementation
+- Mark as PASS if no violations found
+
+EXAMPLE VIOLATION:
+```php
+// In Controller - WRONG
+public function listAction(GetPendingSuggestionsHttpRequest $request, GetPendingSuggestionsUseCase $useCase): JsonResponse {
+    $this->denyAccessUnlessGranted(Permission::AI_SUGGESTIONS_READ, [$request->getOrganizationId()]); // VIOLATION
+    return $this->response($useCase($request));
+}
+```
+
+EXAMPLE FIX:
+```php
+// In GetPendingSuggestionsHttpRequest - CORRECT
+protected function securityCheck(): bool
+{
+    return $this->security->isGranted(
+        Permission::AI_SUGGESTIONS_READ,
+        [$this->getOrganizationId()]
+    );
+}
+
+// In Controller - CORRECT (no auth code)
+public function listAction(GetPendingSuggestionsHttpRequest $request, GetPendingSuggestionsUseCase $useCase): JsonResponse {
+    return $this->response($useCase($request));
+}
+```

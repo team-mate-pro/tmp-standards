@@ -219,6 +219,18 @@ $document = new Document(
 );
 ```
 
+## Relation to UCB-006
+
+This rule works together with **UCB-006: Authorization in Request Class**:
+
+- **UCB-003** (this rule): No authorization in UseCase layer
+- **UCB-006**: Authorization must be in Request layer via `securityCheck()` method
+
+Together they establish the authorization boundary:
+- **Request** (presentation layer): Handles authorization via `securityCheck()`
+- **Controller** (presentation layer): Delegates to Request and UseCase, no security checks
+- **UseCase** (application layer): Pure business logic, no security concerns
+
 ## Exception
 
 There are no exceptions to this rule. All authorization must happen before the UseCase is invoked.
