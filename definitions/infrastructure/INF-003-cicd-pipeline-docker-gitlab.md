@@ -10,9 +10,11 @@
 
 ## Definition
 
-GitLab CI/CD pipelines for PHP/Symfony projects **must** follow a consistent structure with Docker-based jobs. Pipelines run **only on open Merge Requests** and **direct pushes to protected branches** (when no MR exists). Once an MR is merged, the push event to the target branch **must not** re-run test/analysis stages — only build and deploy stages execute on protected branches.
+GitLab CI/CD pipelines for PHP/Symfony projects **must** follow a consistent structure with Docker-based jobs. Pipelines run on:
+- **Merge Requests**: Static analysis runs automatically, functional tests are manual
+- **Protected branches** (`main`, `master`, `stage`): Full pipeline runs — static analysis, functional tests (automatic), build, and deploy
 
-Commits prefixed with `HOTFIX:` bypass all pipeline stages entirely.
+Commits prefixed with `HOTFIX:` bypass all pipeline stages entirely, allowing emergency deployments without CI checks.
 
 ## Pipeline Stages
 
@@ -26,14 +28,14 @@ stages:
   - deploy
 ```
 
-| Stage | Runs on MR | Runs on direct push to protected branch (no MR) | Runs on merge to protected branch |
-|-------|-----------|--------------------------------------------------|-----------------------------------|
-| `static_analysis` | Yes (auto) | Yes (auto) | No |
-| `test` | Yes (manual only) | Yes (manual only) | No |
-| `build` | No | No | Yes |
-| `deploy` | No | No | Yes |
+| Stage | Runs on MR | Runs on push to protected branch |
+|-------|-----------|----------------------------------|
+| `static_analysis` | Yes (auto) | Yes (auto) |
+| `test` | Yes (manual) | Yes (auto, after static_analysis) |
+| `build` | No | Yes (after test passes) |
+| `deploy` | No | Yes (after build) |
 
-> **Note:** Functional tests (`test` stage) are **always manual** — they require explicit trigger by a developer because they need external services (database, queues, etc.). Static analysis runs automatically.
+> **Note:** Functional tests (`test` stage) are **manual on MRs** but **automatic on protected branches** (after static analysis passes). On MRs, they require explicit trigger because they need external services (database, queues, etc.). On protected branches, they must pass to ensure code quality before deployment.
 
 ## Pipeline Rules
 
@@ -49,13 +51,11 @@ workflow:
     - when: always
 ```
 
-### Rule 2: Test and analysis stages — MR + direct push only
+### Rule 2: Static analysis — MR and protected branches
 
-Static analysis and test jobs run on:
+Static analysis jobs run automatically on:
 - Open Merge Requests (`merge_request_event`)
-- Direct pushes to `main`/`master`/`stage` when **no open MR exists** for that branch
-
-They do **not** run when an MR is merged (push event with open MR):
+- Pushes to protected branches (`main`, `master`, `stage`)
 
 ```yaml
 .rules_for_tests: &rules_for_tests
@@ -63,12 +63,33 @@ They do **not** run when an MR is merged (push event with open MR):
     - if: '$CI_COMMIT_TITLE =~ /^HOTFIX:/'
       when: never
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/ && $CI_OPEN_MERGE_REQUESTS == null'
+    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/'
 ```
 
-### Rule 3: Build and deploy — protected branches only
+### Rule 3: Functional tests — manual on MR, automatic on protected branches
 
-Build and deploy jobs run only on pushes to protected branches (`main`, `master`, `stage`):
+Functional tests have different behavior depending on context:
+- On **MRs**: Manual trigger (requires developer to click "play")
+- On **protected branches**: Automatic after static analysis passes
+
+This ensures:
+- Developers can choose when to run resource-intensive tests during MR review
+- Code merged to protected branches is always tested before deployment
+
+```yaml
+.rules_for_functional_tests: &rules_for_functional_tests
+  rules:
+    - if: '$CI_COMMIT_TITLE =~ /^HOTFIX:/'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/'
+      when: on_success
+```
+
+### Rule 4: Build and deploy — protected branches only, after tests pass
+
+Build and deploy jobs run only on pushes to protected branches (`main`, `master`, `stage`) and only after functional tests pass:
 
 ```yaml
 .rules_for_build: &rules_for_build
@@ -78,6 +99,8 @@ Build and deploy jobs run only on pushes to protected branches (`main`, `master`
     - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/'
       when: on_success
 ```
+
+> **Important:** On protected branches, functional tests run automatically after static analysis. Build and deploy stages run only after tests pass successfully. This ensures production/stage deployments always have passing tests.
 
 ## Correct Usage
 
@@ -114,8 +137,19 @@ workflow:
 
 .rules_for_tests: &rules_for_tests
   rules:
+    - if: '$CI_COMMIT_TITLE =~ /^HOTFIX:/'
+      when: never
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/ && $CI_OPEN_MERGE_REQUESTS == null'
+    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/'
+
+.rules_for_functional_tests: &rules_for_functional_tests
+  rules:
+    - if: '$CI_COMMIT_TITLE =~ /^HOTFIX:/'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/'
+      when: on_success
 
 .before_script_template: &prepare-ssh
   before_script:
@@ -154,11 +188,7 @@ tests_unit:
 
 functional_tests:
   stage: test
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: manual
-    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/ && $CI_OPEN_MERGE_REQUESTS == null'
-      when: manual
+  <<: *rules_for_functional_tests
   before_script:
     - apk add --no-cache bash
   script:
@@ -275,18 +305,39 @@ phpcs:
     - docker-compose -f docker-compose.gitlab-qa.yml run --rm tests_phpcs
 ```
 
-### Tests re-running on merge
+### Missing HOTFIX check in functional tests
 
 ```yaml
-# WRONG: Tests run on every push to main, including MR merges
-# This wastes CI resources since MR pipeline already validated the code
+# WRONG: Functional tests will run even on HOTFIX commits
+# Emergency fixes should bypass all CI stages
 
-phpstan:
-  stage: static_analysis
+functional_tests:
+  stage: test
   rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'   # Missing: && $CI_OPEN_MERGE_REQUESTS == null
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/'
+      when: on_success
+    # Missing: HOTFIX bypass rule at the start
   script:
-    - docker-compose -f docker-compose.gitlab-qa.yml run --rm tests_phpstan
+    - bash tools/test/test.sh
+```
+
+### Functional tests always manual
+
+```yaml
+# WRONG: Functional tests are manual on protected branches
+# Deployments can happen without tests passing
+
+functional_tests:
+  stage: test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+    - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/'
+      when: manual   # Should be: when: on_success
+  script:
+    - bash tools/test/test.sh
 ```
 
 ## Project Structure
@@ -367,7 +418,7 @@ glab variable set VM_IP_ADDRESS --value "10.0.0.1" --protected --repo "group/pro
 
 ## Rationale
 
-1. **MR-only test execution**: Running tests only on open MRs and direct pushes prevents duplicate pipeline runs. When an MR is merged, GitLab fires a push event — but the MR pipeline already validated the code, so re-running tests wastes CI minutes.
+1. **Manual tests on MRs, automatic on protected branches**: On MRs, functional tests are manual because they require external services and take time — developers trigger them when ready. On protected branches, tests run automatically to ensure deployed code is always validated.
 
 2. **HOTFIX bypass**: Emergency fixes to production need to skip the pipeline to minimize downtime. The `HOTFIX:` prefix provides an explicit, auditable opt-out mechanism.
 
@@ -375,4 +426,4 @@ glab variable set VM_IP_ADDRESS --value "10.0.0.1" --protected --repo "group/pro
 
 4. **Separate app/proxy builds**: Independent build jobs allow proxy-only or app-only deploys, reducing build times when only one service changes.
 
-5. **Protected branch build/deploy**: Build and deploy stages run on every push to protected branches, ensuring the deployed state always matches the branch HEAD.
+5. **Sequential dependencies on protected branches**: Static analysis → functional tests → build → deploy. Each stage depends on the previous passing, ensuring quality gates before deployment.
