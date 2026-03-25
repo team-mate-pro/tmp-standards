@@ -357,7 +357,7 @@ Both services follow the same multi-stage build pattern with `stage` and `prod` 
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `CI_REGISTRY` | `registry.gitlab.com` | GitLab Container Registry URL |
+| `CI_REGISTRY` | `gitlab.team-mate.pl` | GitLab Container Registry URL |
 | `CI_REGISTRY_USER` | `gitlab-ci-token` | Registry auth username |
 | `CI_REGISTRY_PASSWORD` | `$CI_JOB_TOKEN` | Registry auth token (auto-generated per job) |
 | `CI_PROJECT_PATH` | `group/project-name` | Full project path for image tagging |
