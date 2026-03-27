@@ -27,7 +27,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TeamMatePro\\TmpStandards\\Tests\\": "tests/"
+            "TeamMatePro\\TmpStandards\\Tests\\": "tests/",
+            "TeamMatePro\\UseCaseBundle\\": "tests/_Data/Fixtures/UseCaseBundle/"
         }
     },
     "extra": {

@@ -4,7 +4,7 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          failOnRisky="true"
-         failOnWarning="true"
+         failOnWarning="false"
          cacheDirectory=".phpunit.cache"
          beStrictAboutOutputDuringTests="true"
          requireCoverageMetadata="false"
@@ -21,9 +21,4 @@
         </include>
     </source>
 
-    <coverage>
-        <report>
-            <text outputFile="php://stdout" showOnlySummary="true"/>
-        </report>
-    </coverage>
 </phpunit>

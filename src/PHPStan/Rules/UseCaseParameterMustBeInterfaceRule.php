@@ -106,7 +106,7 @@ final class UseCaseParameterMustBeInterfaceRule implements Rule
         return $errors;
     }
 
-    private function checkType(Node $typeNode, Node\Param $param, string $className, Scope $scope): ?\PHPStan\Rules\RuleError
+    private function checkType(Node $typeNode, Node\Param $param, string $className, Scope $scope): ?\PHPStan\Rules\IdentifierRuleError
     {
         // Skip built-in types (scalars, void, etc.)
         if ($typeNode instanceof Node\Identifier) {
