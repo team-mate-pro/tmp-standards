@@ -7,6 +7,7 @@
          failOnWarning="true"
          cacheDirectory=".phpunit.cache"
          beStrictAboutOutputDuringTests="true"
+         requireCoverageMetadata="false"
 >
     <testsuites>
         <testsuite name="unit">
@@ -19,4 +20,10 @@
             <directory>src</directory>
         </include>
     </source>
+
+    <coverage>
+        <report>
+            <text outputFile="php://stdout" showOnlySummary="true"/>
+        </report>
+    </coverage>
 </phpunit>

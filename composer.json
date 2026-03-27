@@ -15,7 +15,10 @@
         "phpstan/phpstan": "^1.11 || ^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0 || ^11.0"
+        "phpunit/phpunit": "^10.0 || ^11.0",
+        "phpstan/extension-installer": "*",
+        "squizlabs/php_codesniffer": "^3.10",
+        "team-mate-pro/make": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -35,10 +38,17 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
-        "test:coverage": "phpunit --coverage-text"
+        "phpunit": "APP_ENV=test ./vendor/bin/phpunit tests --testdox --colors=always",
+        "tests:unit": "@phpunit",
+        "phpcs": "php vendor/bin/phpcs --standard=phpcs.xml --exclude=Generic.Files.LineLength",
+        "phpcs:fix": "php vendor/bin/phpcbf --standard=phpcs.xml --exclude=Generic.Files.LineLength",
+        "phpstan": "php vendor/phpstan/phpstan/phpstan analyse --memory-limit=1G",
+        "phpstan:baseline": "php vendor/phpstan/phpstan/phpstan analyse --memory-limit=1G --generate-baseline"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }
