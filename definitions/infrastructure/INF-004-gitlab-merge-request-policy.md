@@ -14,12 +14,29 @@ All TMP GitLab projects must enforce consistent merge request policies to ensure
 
 ## Required Settings
 
+### Merge Method
+
+Every project **must** use **Fast-forward merge** in `Settings → Merge requests → Merge method`:
+
+| Setting | Required Value | Description |
+|---------|----------------|-------------|
+| Merge method | `Fast-forward merge` | No merge commits, linear history only |
+
+**Why Fast-forward merge:**
+- **Clean linear history**: All commits appear in sequence on the main branch without merge commit noise
+- **Forces rebasing**: Developers must rebase on latest target branch before merging, ensuring conflicts are resolved early
+- **Easier bisecting**: Linear history makes `git bisect` more effective for finding bugs
+- **Cleaner blame**: `git blame` shows the actual author, not merge commit authors
+
+**Trade-off**: Feature branch integration points are not explicitly marked (no merge commits). Use descriptive commit messages and MR links in commits to maintain traceability.
+
 ### Merge Request Settings
 
 Every project **must** have these settings enabled in `Settings → Merge requests`:
 
 | Setting | Required Value | Description |
 |---------|----------------|-------------|
+| Merge method | `Fast-forward merge` | No merge commits created, linear history |
 | `only_allow_merge_if_pipeline_succeeds` | `true` | Cannot merge if pipeline fails or has conflicts |
 | `only_allow_merge_if_all_discussions_are_resolved` | `true` | All review comments must be addressed |
 
@@ -71,9 +88,17 @@ Configure in `Settings → General → Visibility`:
 curl --request PUT \
   --header "PRIVATE-TOKEN: $GL_TOKEN" \
   "https://gitlab.team-mate.pl/api/v4/projects/$PROJECT_ID" \
+  --data "merge_method=ff" \
   --data "only_allow_merge_if_pipeline_succeeds=true" \
   --data "only_allow_merge_if_all_discussions_are_resolved=true"
 ```
+
+**Merge method API values:**
+| UI Value | API Value |
+|----------|-----------|
+| Merge commit | `merge` |
+| Merge commit with semi-linear history | `rebase_merge` |
+| Fast-forward merge | `ff` |
 
 ### Protected Branch Settings
 
@@ -102,6 +127,7 @@ curl --request POST \
 ### GitLab UI Checklist
 
 1. **Settings → Merge requests**
+   - [x] Merge method: Fast-forward merge
    - [x] Pipelines must succeed
    - [x] All discussions must be resolved
 
@@ -113,6 +139,15 @@ curl --request POST \
    - [x] Force push: Disabled
 
 ## Violation Examples
+
+### Wrong Merge Method
+
+```
+Settings → Merge requests:
+  Merge method: Merge commit ❌
+```
+
+**Problem:** Creates unnecessary merge commits, resulting in a non-linear history that's harder to navigate and bisect.
 
 ### Missing Pipeline Requirement
 
@@ -142,15 +177,19 @@ Protected branches: (none)
 
 ## Rationale
 
-1. **Code Quality**: Requiring passing pipelines prevents broken code from being merged.
+1. **Linear History**: Fast-forward merge creates a clean, linear commit history without merge commit noise, making `git log`, `git bisect`, and `git blame` more effective.
 
-2. **Code Review**: Requiring resolved discussions ensures feedback is addressed.
+2. **Early Conflict Resolution**: Requiring rebase before merge forces developers to resolve conflicts against the latest target branch, not during the merge.
 
-3. **Branch Protection**: Preventing direct pushes to protected branches enforces the MR workflow.
+3. **Code Quality**: Requiring passing pipelines prevents broken code from being merged.
 
-4. **Audit Trail**: All changes go through merge requests, providing clear history.
+4. **Code Review**: Requiring resolved discussions ensures feedback is addressed.
 
-5. **Consistency**: Same policy across all projects reduces confusion.
+5. **Branch Protection**: Preventing direct pushes to protected branches enforces the MR workflow.
+
+6. **Audit Trail**: All changes go through merge requests, providing clear history.
+
+7. **Consistency**: Same policy across all projects reduces confusion.
 
 ## Automation
 
@@ -170,6 +209,7 @@ for id in $PROJECT_IDS; do
   curl -s --request PUT \
     -H "PRIVATE-TOKEN: $GL_TOKEN" \
     "$GL_URL/projects/$id" \
+    --data "merge_method=ff" \
     --data "only_allow_merge_if_pipeline_succeeds=true" \
     --data "only_allow_merge_if_all_discussions_are_resolved=true"
 
