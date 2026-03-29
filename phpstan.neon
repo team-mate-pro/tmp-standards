@@ -1,5 +1,5 @@
 includes:
-    - vendor/team-mate-pro/tmp-standards/phpstan-extension.neon
+    - phpstan-extension.neon
 parameters:
     level: max
     paths:

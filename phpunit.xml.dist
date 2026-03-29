@@ -14,9 +14,19 @@
         </testsuite>
     </testsuites>
 
+    <coverage>
+        <report>
+            <clover outputFile="coverage-clover.xml"/>
+        </report>
+    </coverage>
+
     <source>
         <include>
             <directory>src</directory>
         </include>
     </source>
+
+    <php>
+        <env name="APP_ENV" value="test"/>
+    </php>
 </phpunit>
