@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use TeamMatePro\TestsBundle\TeamMateProTestsBundle;
+use TeamMatePro\TmpStandards\TmpStandardsBundle;
 
 final class Kernel extends BaseKernel
 {
@@ -19,6 +20,7 @@ final class Kernel extends BaseKernel
         return [
             new FrameworkBundle(),
             new TeamMateProTestsBundle(),
+            new TmpStandardsBundle(),
         ];
     }
 

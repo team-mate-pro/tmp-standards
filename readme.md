@@ -54,17 +54,24 @@ tmp-standards/
 │       ├── UCB-004-controller-must-use-response-method.md
 │       └── UCB-005-controller-action-method-suffix.md
 ├── src/                            # Source code
-│   └── PHPStan/
-│       └── Rules/
-│           ├── ControllerActionMethodSuffixRule.php
-│           ├── UseCaseMustHaveInvokeMethodRule.php
-│           └── UseCaseParameterMustBeInterfaceRule.php
+│   ├── Command/                    # Symfony console commands
+│   │   ├── RunStandardCommand.php
+│   │   └── RunStandardSuiteCommand.php
+│   ├── PHPStan/
+│   │   └── Rules/
+│   │       ├── ControllerActionMethodSuffixRule.php
+│   │       ├── UseCaseMustHaveInvokeMethodRule.php
+│   │       └── UseCaseParameterMustBeInterfaceRule.php
+│   ├── Standard/                   # Standard runner infrastructure
+│   │   ├── CheckType.php
+│   │   ├── StandardDefinition.php
+│   │   ├── StandardRegistry.php
+│   │   ├── StandardRunner.php
+│   │   └── SuiteRegistry.php
+│   └── TmpStandardsBundle.php
 ├── tests/                          # PHPUnit tests
-│   ├── _Data/
-│   │   └── Fixtures/               # Test fixtures
-│   │       └── UseCase/
-│   └── PHPStan/
-│       └── Rules/                  # Rule tests
+├── docker/                         # Docker configuration
+├── bin/console                     # Symfony console entrypoint
 ├── composer.json
 ├── phpstan-extension.neon          # PHPStan extension config
 ├── phpstan.neon                    # PHPStan config for this package
@@ -112,6 +119,75 @@ Each standard definition should clearly specify:
 | [UCB-003](definitions/use-case-bundle/UCB-003-no-auth-in-use-case.md) | No Authorization in UseCase Layer | AI |
 | [UCB-004](definitions/use-case-bundle/UCB-004-controller-must-use-response-method.md) | Controller Must Use $this->response() | MANUAL |
 | [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md) | Controller Action Methods Must Have "Action" Suffix | PHPSTAN |
+
+## Console Commands
+
+The bundle provides Symfony console commands to run standard checks from your project.
+
+### Run a Single Standard
+
+```bash
+php bin/console tmp:standard {id}
+```
+
+Examples:
+
+```bash
+php bin/console tmp:standard test-001    # Run TEST-001 (script-based)
+php bin/console tmp:standard ucb-001     # Run UCB-001 (PHPStan-based)
+php bin/console tmp:standard cc-001      # Run CC-001 (AI prompt-based)
+php bin/console tmp:standard inf-004     # Run INF-004 (manual — skipped with warning)
+```
+
+The command exits with code `1` if the check fails.
+
+### Run a Suite
+
+```bash
+php bin/console tmp:standard:suite {name}
+```
+
+Available suites:
+
+| Suite | Standards | Description |
+|-------|-----------|-------------|
+| `php-sf-app` | ARCH, CC, SOLID, INF, TEST, UCB | Full check for Symfony applications |
+| `php-lib` | CC, SOLID, TEST | Lighter check for PHP libraries |
+| `frontend` | FE | Frontend standards |
+| `infra` | INF | Infrastructure standards |
+
+Example:
+
+```bash
+php bin/console tmp:standard:suite php-sf-app
+```
+
+The suite prints a summary table at the end and exits with code `1` if any check fails.
+
+### Options
+
+Both commands accept `--project-dir` to specify the project root (defaults to current directory):
+
+```bash
+php bin/console tmp:standard test-001 --project-dir=/path/to/project
+```
+
+### Check Types
+
+| Type | Requires | Behavior |
+|------|----------|----------|
+| **script** | bash | Runs the `.sh` validation script |
+| **prompt** | [Claude CLI](https://claude.ai/claude-code) | Runs AI review via Claude CLI |
+| **phpstan** | composer phpstan | Runs PHPStan analysis (deduplicated across suite) |
+| **manual** | human | Skips with warning (does not fail the suite) |
+
+### Bundle Registration
+
+If your project uses Symfony Flex, the bundle registers automatically. Otherwise, add to `config/bundles.php`:
+
+```php
+TeamMatePro\TmpStandards\TmpStandardsBundle::class => ['all' => true],
+```
 
 ## Validation Scripts
 
@@ -296,25 +372,29 @@ See [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffi
 
 ### Requirements
 
-- PHP 8.3+
-- Composer
+- Docker & Docker Compose
 
 ### Setup
 
 ```bash
-composer install
+make start
 ```
 
-### Running Tests
+### Running All Checks
 
 ```bash
-composer test
+make check
 ```
 
-### Running PHPStan
+This runs PHPCS, PHPStan, and unit tests with 100% coverage enforcement.
+
+### Individual Commands
 
 ```bash
-vendor/bin/phpstan analyse
+make phpcs          # Code style
+make phpstan        # Static analysis
+make tests_unit     # Unit tests with coverage
+make fix            # Auto-fix code style
 ```
 
 ## License
