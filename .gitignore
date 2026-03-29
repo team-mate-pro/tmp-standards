@@ -54,3 +54,5 @@ composer.lock
 # Embedded web-server pid file
 /.web-server-pid
 .idea
+coverage-clover.xml
+.phpcs-cache

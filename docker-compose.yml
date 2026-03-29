@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: bash
+    container_name: tmp-standards-app
+    volumes:
+      - .:/app
+      - ./vendor:/app/vendor
+    working_dir: /app
+    entrypoint: []
+    command: ["bash", "-c", "composer update --no-ansi --no-interaction --no-progress && sleep infinity"]
+    tty: true
+    stdin_open: true
