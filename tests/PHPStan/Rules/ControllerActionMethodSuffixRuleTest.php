@@ -38,10 +38,12 @@ final class ControllerActionMethodSuffixRuleTest extends RuleTestCase
                 [
                     'Controller method "ControllerWithoutActionSuffix::importAllExternalCustomers()" must have the "Action" suffix (e.g. "importAllExternalCustomersAction").',
                     14,
+                    'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],
                 [
                     'Controller method "ControllerWithoutActionSuffix::externalCustomerLookup()" must have the "Action" suffix (e.g. "externalCustomerLookupAction").',
                     18,
+                    'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],
             ]
         );
@@ -55,8 +57,17 @@ final class ControllerActionMethodSuffixRuleTest extends RuleTestCase
                 [
                     'Controller method "ControllerWithMixedMethods::createOrder()" must have the "Action" suffix (e.g. "createOrderAction").',
                     22,
+                    'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],
             ]
+        );
+    }
+
+    public function testAbstractControllerIsExempt(): void
+    {
+        $this->analyse(
+            [__DIR__ . '/../../_Data/Fixtures/Controller/AbstractExampleController.php'],
+            []
         );
     }
 

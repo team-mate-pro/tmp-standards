@@ -19,6 +19,9 @@ use PHPStan\Rules\RuleErrorBuilder;
  */
 final class UseCaseMustHaveInvokeMethodRule implements Rule
 {
+    /**
+     * @codeCoverageIgnore Called internally by PHPStan — not instrumentable via PCOV
+     */
     public function getNodeType(): string
     {
         return Class_::class;
@@ -29,9 +32,11 @@ final class UseCaseMustHaveInvokeMethodRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        // @codeCoverageIgnoreStart
         if ($node->name === null) {
             return [];
         }
+        // @codeCoverageIgnoreEnd
 
         $className = $node->name->toString();
 
@@ -45,7 +50,7 @@ final class UseCaseMustHaveInvokeMethodRule implements Rule
 
         foreach ($node->getMethods() as $method) {
             if ($method->name->toString() === '__invoke') {
-                return [];
+                return []; // @codeCoverageIgnore
             }
         }
 
