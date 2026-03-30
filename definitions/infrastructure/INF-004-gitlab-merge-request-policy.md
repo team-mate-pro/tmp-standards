@@ -54,7 +54,7 @@ If available, configure approval rules in `Settings → Merge requests → Merge
 
 ### Protected Branches
 
-Every project **must** protect `master`, `main`, and `stage` branches (whichever exist) with:
+Every project **must** automatically protect `master`, `main`, and `stage` branches (whichever exist) with:
 
 | Setting | Required Value | Description |
 |---------|----------------|-------------|
@@ -62,6 +62,13 @@ Every project **must** protect `master`, `main`, and `stage` branches (whichever
 | Allowed to merge | Maintainers (40) | Only maintainers can merge MRs |
 | Allowed to force push | No one | Force push disabled |
 | Code owner approval | Required | CODEOWNERS must approve |
+
+**Mandatory branches to protect:**
+- `main` - primary branch (new projects)
+- `master` - primary branch (legacy projects)
+- `stage` - staging/pre-production branch (if exists)
+
+**Important:** These branches must be protected immediately when created. Use the automation script below to ensure compliance.
 
 ### Additional Security Settings
 
@@ -197,23 +204,107 @@ Use the following script to verify and fix settings across all projects:
 
 ```bash
 #!/bin/bash
+# INF-004 Compliance Script
+# Configures all GitLab projects according to merge request policy
+
+GL_TOKEN="${GL_TOKEN:-your-token}"
+GL_URL="${GL_URL:-https://gitlab.team-mate.pl/api/v4}"
+
+# Groups to process (space-separated)
+GROUPS="team-mate-pro sh"
+
+# Branches that must be protected
+PROTECTED_BRANCHES="main master stage"
+
+protect_branch() {
+  local project_id=$1
+  local branch=$2
+
+  # Check if branch exists
+  exists=$(curl -s -H "PRIVATE-TOKEN: $GL_TOKEN" \
+    "$GL_URL/projects/$project_id/repository/branches/$branch" | jq -r '.name // empty')
+
+  if [ -n "$exists" ]; then
+    # Remove existing protection (ignore errors)
+    curl -s --request DELETE \
+      -H "PRIVATE-TOKEN: $GL_TOKEN" \
+      "$GL_URL/projects/$project_id/protected_branches/$branch" > /dev/null 2>&1
+
+    # Add protection with correct settings
+    curl -s --request POST \
+      -H "PRIVATE-TOKEN: $GL_TOKEN" \
+      "$GL_URL/projects/$project_id/protected_branches" \
+      --data "name=$branch" \
+      --data "push_access_level=40" \
+      --data "merge_access_level=40" \
+      --data "allow_force_push=false" > /dev/null
+
+    echo "    Protected: $branch"
+  fi
+}
+
+echo "=== INF-004 Compliance Check ==="
+echo ""
+
+for group in $GROUPS; do
+  echo "Group: $group"
+
+  # Get all projects in group (including subgroups)
+  PROJECTS=$(curl -s -H "PRIVATE-TOKEN: $GL_TOKEN" \
+    "$GL_URL/groups/$group/projects?include_subgroups=true&per_page=100" | jq -r '.[] | "\(.id):\(.name)"')
+
+  for proj in $PROJECTS; do
+    id=$(echo $proj | cut -d: -f1)
+    name=$(echo $proj | cut -d: -f2-)
+
+    echo "  [$id] $name"
+
+    # Update merge request settings
+    curl -s --request PUT \
+      -H "PRIVATE-TOKEN: $GL_TOKEN" \
+      "$GL_URL/projects/$id" \
+      --data "merge_method=ff" \
+      --data "only_allow_merge_if_pipeline_succeeds=true" \
+      --data "only_allow_merge_if_all_discussions_are_resolved=true" > /dev/null
+
+    echo "    MR settings: ff, pipeline_required, discussions_required"
+
+    # Protect required branches
+    for branch in $PROTECTED_BRANCHES; do
+      protect_branch "$id" "$branch"
+    done
+  done
+  echo ""
+done
+
+echo "=== Done ==="
+```
+
+### Quick Single-Project Fix
+
+```bash
+# Fix a single project by ID
+PROJECT_ID=16
 GL_TOKEN="your-token"
 GL_URL="https://gitlab.team-mate.pl/api/v4"
 
-# Get all project IDs
-PROJECT_IDS=$(curl -s -H "PRIVATE-TOKEN: $GL_TOKEN" \
-  "$GL_URL/groups/team-mate-pro/projects" | jq -r '.[].id')
+# MR settings
+curl -s --request PUT -H "PRIVATE-TOKEN: $GL_TOKEN" \
+  "$GL_URL/projects/$PROJECT_ID" \
+  --data "merge_method=ff" \
+  --data "only_allow_merge_if_pipeline_succeeds=true" \
+  --data "only_allow_merge_if_all_discussions_are_resolved=true"
 
-for id in $PROJECT_IDS; do
-  # Update merge request settings
-  curl -s --request PUT \
-    -H "PRIVATE-TOKEN: $GL_TOKEN" \
-    "$GL_URL/projects/$id" \
-    --data "merge_method=ff" \
-    --data "only_allow_merge_if_pipeline_succeeds=true" \
-    --data "only_allow_merge_if_all_discussions_are_resolved=true"
-
-  echo "Updated project $id"
+# Protect main/master/stage (run for each existing branch)
+for branch in main master stage; do
+  curl -s --request DELETE -H "PRIVATE-TOKEN: $GL_TOKEN" \
+    "$GL_URL/projects/$PROJECT_ID/protected_branches/$branch" 2>/dev/null
+  curl -s --request POST -H "PRIVATE-TOKEN: $GL_TOKEN" \
+    "$GL_URL/projects/$PROJECT_ID/protected_branches" \
+    --data "name=$branch" \
+    --data "push_access_level=40" \
+    --data "merge_access_level=40" \
+    --data "allow_force_push=false"
 done
 ```
 
