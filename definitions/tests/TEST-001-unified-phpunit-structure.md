@@ -11,10 +11,10 @@
 ## Definition
 
 Every TMP PHP project must have a unified test structure with:
-1. `phpunit.xml` (or `phpunit.xml.dist`) defining test suites
-2. Composer scripts for running each test suite independently
-3. Conditional warmup using `team-mate-pro/tests-bundle`
-4. Makefile aliases for common test commands
+1. **TEST-001.1:** `phpunit.xml` (or `phpunit.xml.dist`) defining test suites
+2. **TEST-001.2:** Composer scripts for running each test suite independently
+3. **TEST-001.3:** Conditional warmup using `team-mate-pro/tests-bundle`
+4. **TEST-001.4:** Makefile aliases for common test commands
 
 ## Required Composer Scripts
 
