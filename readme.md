@@ -102,6 +102,7 @@ Each standard definition should clearly specify:
 | Code | Title | Check Method |
 |------|-------|--------------|
 | [CC-001](definitions/clean-code/CC-001-no-persist-in-creational-patterns.md) | No Persistence in Creational Patterns | AI |
+| [CC-002](definitions/clean-code/CC-002-fail-fast.md) | Fail Fast | AI |
 | [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | SCRIPT |
 | [INF-005](definitions/infrastructure/INF-005-changelog-keepachangelog.md) | Changelog (Keep a Changelog) | AI |
 | [SOLID-001](definitions/design-patterns/solid/SOLID-001-single-responsibility-principle.md) | Single Responsibility Principle (SRP) | AI |

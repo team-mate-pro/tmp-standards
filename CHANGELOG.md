@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### 1.2.0
 - Standard INF-005: wymóg prowadzenia changelogu zgodnego z Keep a Changelog
+- Standard CC-002: wzorzec Fail Fast z guard clauses i walidacją na granicy
+- Identyfikatory sub-reguł (PREFIX-NNN.N) we wszystkich definicjach z wieloma regułami
+- Instrukcje tworzenia definicji i prowadzenia changelogu w readme.md i CLAUDE.md
 
 ## [1.1.0] - 2025-03-01
 
