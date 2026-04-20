@@ -103,6 +103,7 @@ Each standard definition should clearly specify:
 |------|-------|--------------|
 | [CC-001](definitions/clean-code/CC-001-no-persist-in-creational-patterns.md) | No Persistence in Creational Patterns | AI |
 | [CC-002](definitions/clean-code/CC-002-fail-fast.md) | Fail Fast | AI |
+| [CC-003](definitions/clean-code/CC-003-psr3-exception-logging.md) | PSR-3 Exception Logging Context | PHPSTAN + AI |
 | [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | SCRIPT |
 | [INF-005](definitions/infrastructure/INF-005-changelog-keepachangelog.md) | Changelog (Keep a Changelog) | AI |
 | [SOLID-001](definitions/design-patterns/solid/SOLID-001-single-responsibility-principle.md) | Single Responsibility Principle (SRP) | AI |
@@ -185,6 +186,7 @@ includes:
 | `UseCaseMustHaveInvokeMethodRule` | `useCase.missingInvoke` | [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) |
 | `UseCaseParameterMustBeInterfaceRule` | `useCase.parameterMustBeInterface` | [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) |
 | `ControllerActionMethodSuffixRule` | `controller.actionMethodSuffix` | [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md) |
+| `PsrLoggerExceptionContextKeyRule` | `logger.exceptionContextKey` | [CC-003](definitions/clean-code/CC-003-psr3-exception-logging.md) |
 
 ### Disabling Rules
 
@@ -216,6 +218,7 @@ Available rule identifiers:
 | `useCase.missingInvoke` | `UseCaseMustHaveInvokeMethodRule` |
 | `useCase.parameterMustBeInterface` | `UseCaseParameterMustBeInterfaceRule` |
 | `controller.actionMethodSuffix` | `ControllerActionMethodSuffixRule` |
+| `logger.exceptionContextKey` | `PsrLoggerExceptionContextKeyRule` |
 
 You can also ignore errors inline with PHPStan comments:
 
@@ -294,6 +297,23 @@ final class CustomerController extends AbstractRestApiController
 ```
 
 See [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md) for detailed documentation.
+
+#### PsrLoggerExceptionContextKeyRule
+
+When a `\Throwable` is passed to a PSR-3 `LoggerInterface` call (`error`, `critical`, `warning`, `notice`, `info`, `debug`, `log`), it **must** live under the context key `'exception'`. PSR-3 §1.3 reserves that key so Sentry/Monolog can extract the full stack trace and previous-exception chain. Any other key (`'error'`, `'throwable'`, `'e'`, `'ex'`, numeric) is flagged.
+
+```php
+// CORRECT
+$this->logger->error('Payment failed', ['exception' => $e, 'orderId' => $order->getId()]);
+
+// VIOLATION — wrong key
+$this->logger->error('Payment failed', ['error' => $e]);
+
+// VIOLATION — numeric key
+$this->logger->error('Payment failed', [$e]);
+```
+
+See [CC-003](definitions/clean-code/CC-003-psr3-exception-logging.md) for detailed documentation (including the other CC-003.2 – CC-003.6 sub-rules, enforced via the AI prompt).
 
 ## Development
 

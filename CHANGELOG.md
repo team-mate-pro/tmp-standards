@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### 1.2.0
+## [1.3.0] - 2026-04-20
+
+### Added
+- Standard CC-003: logowanie wyjątków przez PSR-3 z kluczem `exception` w kontekście (Sentry/Monolog wyciąga stack trace automatycznie); doprecyzowuje relację do CC-002 Fail Fast — catch-log-swallow dozwolony wyłącznie na jawnych granicach (handlery kolejek, crony, listenery kernela, best-effort side effects)
+- Reguła PHPStan `logger.exceptionContextKey` (`PsrLoggerExceptionContextKeyRule`) egzekwująca CC-003.1 — `\Throwable` w kontekście loggera PSR-3 musi być pod kluczem `'exception'`; inne klucze (`error`, `throwable`, `e`, `ex`, numeryczne) są flagowane
+- Zależność `psr/log` (`^3.0`) w `require-dev` — potrzebna do fixturów i testów reguły
+
+## [1.2.0] - 2026-04-17
+
+### Added
 - Standard INF-005: wymóg prowadzenia changelogu zgodnego z Keep a Changelog
 - Standard CC-002: wzorzec Fail Fast z guard clauses i walidacją na granicy
 - Identyfikatory sub-reguł (PREFIX-NNN.N) we wszystkich definicjach z wieloma regułami
@@ -58,7 +67,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standard UCB-002: use case musi mieć metodę __invoke()
 - Standard INF-001: Makefile do lokalnego developmentu
 
-[Unreleased]: https://github.com/team-mate-pro/tmp-standards/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/team-mate-pro/tmp-standards/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/team-mate-pro/tmp-standards/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/team-mate-pro/tmp-standards/compare/v1.0.1...v1.0.2
