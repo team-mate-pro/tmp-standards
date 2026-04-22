@@ -57,12 +57,12 @@ Each entry is a single bullet point (`-`) with a short, understandable descripti
 - Language: **Polish** (preferred) or English
 - Style: concise, non-technical, human-readable
 - If a change is linked to a Jira task — add a link at the end of the line
-- If a change is critical or complex — add a link to an extended description under `docs/changelog/{YYYY-MM-DD}-{slug}.md`
+- If a change is critical or complex — add a link to an extended description under `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md`
 
 ```markdown
 ### Added
 - Eksport zamówień do pliku CSV [TMP-123](https://jira.team-mate.pl/browse/TMP-123)
-- Automatyczne powiadomienia SMS o statusie dostawy — szczegóły w [docs/changelog/2025-03-15-sms-notifications.md](docs/changelog/2025-03-15-sms-notifications.md)
+- Automatyczne powiadomienia SMS o statusie dostawy — szczegóły w [docs/changelog/2025-03-15-1.2.0-sms-notifications.md](docs/changelog/2025-03-15-1.2.0-sms-notifications.md)
 ```
 
 ### Diff Links (at the bottom of the file)
@@ -77,7 +77,7 @@ Each entry is a single bullet point (`-`) with a short, understandable descripti
 
 Not every change requires additional documentation. The main `CHANGELOG.md` stays short — extended descriptions live in `docs/changelog/` and are linked from the changelog entry only when the change qualifies.
 
-Add a link to `docs/changelog/{YYYY-MM-DD}-{slug}.md` when:
+Add a link to `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` when:
 
 - The change involves **critical business logic** (e.g. a new pricing algorithm)
 - The change is **complex** and requires context, migration steps, or configuration explanation
@@ -85,30 +85,41 @@ Add a link to `docs/changelog/{YYYY-MM-DD}-{slug}.md` when:
 
 ### File Location and Naming
 
-Extended descriptions **must** be stored under `docs/changelog/` with the filename format `{YYYY-MM-DD}-{slug}.md`:
+Extended descriptions **must** be stored under `docs/changelog/` with the filename format `{YYYY-MM-DD}-{version}-{slug}.md`:
 
 - `{YYYY-MM-DD}` — release date matching the version where the change lands (for `[Unreleased]` entries use the planned release date or the date of the change)
+- `{version}` — target version where the change lands (e.g. `1.2.0`, `2.0.0-rc1`); for changes still in `[Unreleased]` use the literal string `unreleased`
 - `{slug}` — short kebab-case identifier describing the change (e.g. `pricing-algorithm`, `sms-notifications`, `auth-migration`)
 
 Examples:
 
 ```
-docs/changelog/2025-03-15-sms-notifications.md
-docs/changelog/2025-03-15-discount-algorithm.md
-docs/changelog/2026-04-17-auth-migration.md
+docs/changelog/2025-03-15-1.2.0-sms-notifications.md
+docs/changelog/2025-03-15-1.2.0-discount-algorithm.md
+docs/changelog/2026-04-17-2.0.0-auth-migration.md
+docs/changelog/2026-04-22-unreleased-experimental-feature-toggle-semantics.md
 ```
 
 The main changelog links to the extended description **only when the change is related** — short or obvious entries stay inline without a link.
 
 ### Extended Description Content
 
-Each `docs/changelog/{YYYY-MM-DD}-{slug}.md` file should contain:
+Keep the extended description **short and business-focused** — it complements the inline changelog entry, not replaces code review or technical documentation. Target 1–2 scrolls of screen content, not pages.
 
-- Problem description (what and why)
-- Chosen solution
-- Migration steps (if applicable)
-- Impact on other modules or systems
-- Configuration or rollout notes (if applicable)
+Required sections (in this order, skip when not applicable):
+
+- **Problem** — what went wrong or what was missing (2–4 sentences, observable behavior)
+- **Rozwiązanie** / **Solution** — what changed from the user's perspective (bulleted list, no implementation details)
+- **Wdrożenie** / **Deployment notes** — migrations, cache purges, coordination with other teams
+
+**Avoid** in the extended description:
+
+- File paths, class names, method signatures — reader opens the diff for that
+- Test counts, green/red status — belongs in the MR description
+- Step-by-step implementation walkthroughs — belongs in the code or ADR
+- Rationale for alternative approaches not taken — belongs in the MR discussion
+
+If the change genuinely needs deep technical context (migration with reversibility risks, protocol change, RFC-like decision), write an ADR under `docs/architecture/` and link to it from the extended description — don't inline it.
 
 ## Correct Usage
 
@@ -129,7 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Eksport zamówień do CSV [TMP-456](https://jira.team-mate.pl/browse/TMP-456)
-- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/2025-03-15-discount-algorithm.md](docs/changelog/2025-03-15-discount-algorithm.md)
+- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/2025-03-15-1.2.0-discount-algorithm.md](docs/changelog/2025-03-15-1.2.0-discount-algorithm.md)
 
 ### Changed
 - Zmieniono format odpowiedzi API dla listy produktów
@@ -238,18 +249,46 @@ project/
   promocji czasowych i kuponów  ❌ Complex change without docs/changelog/* link
 ```
 
-### Extended description in wrong location
+### Extended description in wrong location or with wrong filename
 
 ```markdown
 ### Added
 - Nowy algorytm naliczania rabatów — szczegóły w [docs/discount-algorithm.md](docs/discount-algorithm.md)  ❌ Not under docs/changelog/
-- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/discount-algorithm.md](docs/changelog/discount-algorithm.md)  ❌ Missing date prefix
+- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/discount-algorithm.md](docs/changelog/discount-algorithm.md)  ❌ Missing date and version prefix
+- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/2025-03-15-discount-algorithm.md](docs/changelog/2025-03-15-discount-algorithm.md)  ❌ Missing version segment
 ```
 
 **Correct:**
 ```markdown
 ### Added
-- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/2025-03-15-discount-algorithm.md](docs/changelog/2025-03-15-discount-algorithm.md)
+- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/2025-03-15-1.2.0-discount-algorithm.md](docs/changelog/2025-03-15-1.2.0-discount-algorithm.md)
+```
+
+### Extended description with too much technical noise
+
+```markdown
+# Discount algorithm
+
+## Zmiany w kodzie
+- **DiscountCalculator::calculate()** — dodany parametr `tier`, refactor z strategy pattern  ❌ file path + implementation detail
+- 12 testów jednostkowych, 3 integracyjne, 100% coverage na DiscountCalculator  ❌ test counts belong in MR description
+- Przeanalizowaliśmy warianty: eager vs lazy evaluation, wybraliśmy eager bo ...  ❌ MR discussion, not changelog
+```
+
+**Correct — business and deployment focus:**
+```markdown
+# Nowy algorytm naliczania rabatów
+
+## Problem
+Stary algorytm nie obsługiwał rabatów grupowych i promocji czasowych łącznie — klient z kuponem tracił rabat grupowy.
+
+## Rozwiązanie
+- Rabat grupowy i kupon kumulują się dla zamówień powyżej 500 zł
+- Promocje czasowe mają priorytet nad rabatami grupowymi w Black Friday
+
+## Wdrożenie
+- Migracja `2025_03_15_discount_tiers` musi być uruchomiona **przed** wdrożeniem kodu
+- Wyczyść cache `orders:discount:*` w Redis po deployu
 ```
 
 ## Rules Summary
@@ -261,7 +300,8 @@ project/
 - **INF-005.5:** Change descriptions in Polish (preferred) or English — short and human-readable
 - **INF-005.6:** Each version with date in `YYYY-MM-DD` format
 - **INF-005.7:** Newest version on top
-- **INF-005.8:** Complex/critical changes with link to an extended description under `docs/changelog/{YYYY-MM-DD}-{slug}.md` (inline entries stay in `CHANGELOG.md`; extended descriptions always live in `docs/changelog/` and are linked only when related)
+- **INF-005.8:** Complex/critical changes with link to an extended description under `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` (inline entries stay in `CHANGELOG.md`; extended descriptions always live in `docs/changelog/` and are linked only when related; use `unreleased` as the version segment for changes still in the `[Unreleased]` section)
+- **INF-005.11:** Extended descriptions are business- and deployment-focused (Problem → Rozwiązanie → Wdrożenie), without file paths, class names, test counts, or implementation walkthroughs — those belong in the MR description, the diff, or an ADR under `docs/architecture/`
 - **INF-005.9:** Task-related changes with Jira link (where applicable)
 - **INF-005.10:** Diff links at the bottom of the file
 

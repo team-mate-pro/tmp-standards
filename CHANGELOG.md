@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Standard INF-006: wymagana struktura zadań Jira (User Story / Task / Bug / Spike) — Kontekst, opening line per typ, Acceptance Criteria, DoR, DoD; zadania opisują obserwowalne zachowanie, implementacja zostaje po stronie programisty; gotowe szablony MD do wklejania do Jiry
+- INF-005.11: rozszerzone opisy w `docs/changelog/` muszą być biznesowe i deploymentowe (Problem → Rozwiązanie → Wdrożenie); zakaz ścieżek plików, nazw klas, liczników testów i walk-throughów implementacji — te treści trafiają do opisu MR lub ADR pod `docs/architecture/`
 
 ### Changed
-- INF-005.8: rozszerzone opisy zmian przeniesione do `docs/changelog/{YYYY-MM-DD}-{slug}.md` — główny `CHANGELOG.md` linkuje do nich tylko gdy zmiana jest złożona/krytyczna; zaktualizowano definicję i prompt AI
+- INF-005.8: nowy schemat nazewnictwa `docs/changelog/{YYYY-MM-DD}-{wersja}-{slug}.md` (np. `2025-03-15-1.2.0-sms-notifications.md`; dla `[Unreleased]` wersja = literal `unreleased`) — ułatwia chronologiczne i wersjonowe grupowanie; zaktualizowano definicję i prompt AI
+- INF-005: rozszerzone opisy zmian przeniesione do `docs/changelog/{YYYY-MM-DD}-{wersja}-{slug}.md` — główny `CHANGELOG.md` linkuje do nich tylko gdy zmiana jest złożona/krytyczna
 
 ## [1.3.0] - 2026-04-20
 

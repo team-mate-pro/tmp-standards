@@ -26,11 +26,13 @@ Every TMP project must have a CHANGELOG.md file in the repository root, followin
 
 7. **INF-005.7: Descriptions must be human-readable**: Entries should be short, concise, and as non-technical as possible. Avoid raw class names, method names, exception types, or code fragments in descriptions. Preferred language: Polish. English is acceptable.
 
-8. **INF-005.8: Complex/critical changes must link to docs/changelog/**: Changes that are complex, critical, or affect business logic should include a link to an extended description under `docs/changelog/{YYYY-MM-DD}-{slug}.md` (date prefix matches the release date, slug is kebab-case). Extended descriptions must NOT live anywhere else — flag links that point to `docs/*.md` outside `docs/changelog/` or filenames missing the `YYYY-MM-DD-` prefix. The main changelog should link to the extended description only when the change is related; short/obvious entries stay inline.
+8. **INF-005.8: Complex/critical changes must link to docs/changelog/**: Changes that are complex, critical, or affect business logic should include a link to an extended description under `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` — date matches the release date, version matches the target version (or the literal `unreleased` for `[Unreleased]` entries), slug is kebab-case. Extended descriptions must NOT live anywhere else — flag links that point to `docs/*.md` outside `docs/changelog/`, filenames missing the `{YYYY-MM-DD}-{version}-` prefix, or version segment containing spaces/uppercase. The main changelog should link to the extended description only when the change is related; short/obvious entries stay inline.
 
 9. **INF-005.9: Jira links where applicable**: Changes associated with Jira tasks should include a link to the issue.
 
 10. **INF-005.10: Diff links at bottom**: The file should include reference links to version diffs at the bottom.
+
+11. **INF-005.11: Extended descriptions must be business- and deployment-focused**: Each `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` file follows the skeleton: Problem → Rozwiązanie/Solution → Wdrożenie/Deployment notes. Flag files that contain file paths, class names, method signatures, test counts, implementation walkthroughs, or "rejected alternatives" — that content belongs in the MR description, the diff, or an ADR under `docs/architecture/`.
 
 ## How to review
 
@@ -41,13 +43,14 @@ Every TMP project must have a CHANGELOG.md file in the repository root, followin
 5. Verify each released version has a date in YYYY-MM-DD format.
 6. Check that versions are ordered from newest to oldest.
 7. Review descriptions for readability — flag overly technical entries (raw class names, method signatures, stack traces).
-8. Check if any complex changes lack an extended description link. When such a link is present, verify it points to `docs/changelog/{YYYY-MM-DD}-{slug}.md` — not to `docs/` directly, and with a valid date prefix.
-9. Verify diff links exist at the bottom of the file.
+8. Check if any complex changes lack an extended description link. When such a link is present, verify it points to `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` — not to `docs/` directly, and with a valid date and version prefix (`unreleased` is a valid version for `[Unreleased]` entries).
+9. For every extended description file under `docs/changelog/`, skim its content and flag implementation detail noise: explicit file paths in `src/...`, class names with `::` method references, test counts like "19/19 green", or sections describing code walkthroughs. Suggest moving that content to the MR description or an ADR.
+10. Verify diff links exist at the bottom of the file.
 
 ## Output format
 
 For each violation found, report:
-- Which rule is violated (INF-005.1 through INF-005.10)
+- Which rule is violated (INF-005.1 through INF-005.11)
 - The specific line or entry that violates the rule
 - Suggested fix
 
