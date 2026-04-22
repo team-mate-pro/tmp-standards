@@ -106,6 +106,7 @@ Each standard definition should clearly specify:
 | [CC-003](definitions/clean-code/CC-003-psr3-exception-logging.md) | PSR-3 Exception Logging Context | PHPSTAN + AI |
 | [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | SCRIPT |
 | [INF-005](definitions/infrastructure/INF-005-changelog-keepachangelog.md) | Changelog (Keep a Changelog) | AI |
+| [INF-006](definitions/infrastructure/INF-006-jira-task-standard.md) | Jira Task Standard | AI + MANUAL |
 | [SOLID-001](definitions/design-patterns/solid/SOLID-001-single-responsibility-principle.md) | Single Responsibility Principle (SRP) | AI |
 | [SOLID-002](definitions/design-patterns/solid/SOLID-002-open-closed-principle.md) | Open/Closed Principle (OCP) | AI |
 | [SOLID-003](definitions/design-patterns/solid/SOLID-003-liskov-substitution-principle.md) | Liskov Substitution Principle (LSP) | AI |

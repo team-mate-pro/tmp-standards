@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Standard INF-006: wymagana struktura zadań Jira (User Story / Task / Bug / Spike) — Kontekst, opening line per typ, Acceptance Criteria, DoR, DoD; zadania opisują obserwowalne zachowanie, implementacja zostaje po stronie programisty; gotowe szablony MD do wklejania do Jiry
+
 ## [1.3.0] - 2026-04-20
 
 ### Added
