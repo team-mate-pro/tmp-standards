@@ -26,7 +26,7 @@ Every TMP project must have a CHANGELOG.md file in the repository root, followin
 
 7. **INF-005.7: Descriptions must be human-readable**: Entries should be short, concise, and as non-technical as possible. Avoid raw class names, method names, exception types, or code fragments in descriptions. Preferred language: Polish. English is acceptable.
 
-8. **INF-005.8: Complex/critical changes must link to docs/**: Changes that are complex, critical, or affect business logic should include a link to a `docs/*.md` file with detailed explanation.
+8. **INF-005.8: Complex/critical changes must link to docs/changelog/**: Changes that are complex, critical, or affect business logic should include a link to an extended description under `docs/changelog/{YYYY-MM-DD}-{slug}.md` (date prefix matches the release date, slug is kebab-case). Extended descriptions must NOT live anywhere else — flag links that point to `docs/*.md` outside `docs/changelog/` or filenames missing the `YYYY-MM-DD-` prefix. The main changelog should link to the extended description only when the change is related; short/obvious entries stay inline.
 
 9. **INF-005.9: Jira links where applicable**: Changes associated with Jira tasks should include a link to the issue.
 
@@ -41,7 +41,7 @@ Every TMP project must have a CHANGELOG.md file in the repository root, followin
 5. Verify each released version has a date in YYYY-MM-DD format.
 6. Check that versions are ordered from newest to oldest.
 7. Review descriptions for readability — flag overly technical entries (raw class names, method signatures, stack traces).
-8. Check if any complex changes lack a `docs/` link.
+8. Check if any complex changes lack an extended description link. When such a link is present, verify it points to `docs/changelog/{YYYY-MM-DD}-{slug}.md` — not to `docs/` directly, and with a valid date prefix.
 9. Verify diff links exist at the bottom of the file.
 
 ## Output format

@@ -57,12 +57,12 @@ Each entry is a single bullet point (`-`) with a short, understandable descripti
 - Language: **Polish** (preferred) or English
 - Style: concise, non-technical, human-readable
 - If a change is linked to a Jira task — add a link at the end of the line
-- If a change is critical or complex — add a link to a `docs/*.md` file with details
+- If a change is critical or complex — add a link to an extended description under `docs/changelog/{YYYY-MM-DD}-{slug}.md`
 
 ```markdown
 ### Added
 - Eksport zamówień do pliku CSV [TMP-123](https://jira.team-mate.pl/browse/TMP-123)
-- Automatyczne powiadomienia SMS o statusie dostawy — szczegóły w [docs/sms-notifications.md](docs/sms-notifications.md)
+- Automatyczne powiadomienia SMS o statusie dostawy — szczegóły w [docs/changelog/2025-03-15-sms-notifications.md](docs/changelog/2025-03-15-sms-notifications.md)
 ```
 
 ### Diff Links (at the bottom of the file)
@@ -73,15 +73,42 @@ Each entry is a single bullet point (`-`) with a short, understandable descripti
 [1.1.0]: https://github.com/org/repo/releases/tag/v1.1.0
 ```
 
-## When to Link to `docs/*`
+## When to Link to an Extended Description
 
-Not every change requires additional documentation. Add a link to `docs/*.md` when:
+Not every change requires additional documentation. The main `CHANGELOG.md` stays short — extended descriptions live in `docs/changelog/` and are linked from the changelog entry only when the change qualifies.
+
+Add a link to `docs/changelog/{YYYY-MM-DD}-{slug}.md` when:
 
 - The change involves **critical business logic** (e.g. a new pricing algorithm)
 - The change is **complex** and requires context, migration steps, or configuration explanation
 - The change **affects other systems** or requires coordination with other teams
 
-The `docs/` file should contain: problem description, chosen solution, migration steps (if applicable), impact on other modules.
+### File Location and Naming
+
+Extended descriptions **must** be stored under `docs/changelog/` with the filename format `{YYYY-MM-DD}-{slug}.md`:
+
+- `{YYYY-MM-DD}` — release date matching the version where the change lands (for `[Unreleased]` entries use the planned release date or the date of the change)
+- `{slug}` — short kebab-case identifier describing the change (e.g. `pricing-algorithm`, `sms-notifications`, `auth-migration`)
+
+Examples:
+
+```
+docs/changelog/2025-03-15-sms-notifications.md
+docs/changelog/2025-03-15-discount-algorithm.md
+docs/changelog/2026-04-17-auth-migration.md
+```
+
+The main changelog links to the extended description **only when the change is related** — short or obvious entries stay inline without a link.
+
+### Extended Description Content
+
+Each `docs/changelog/{YYYY-MM-DD}-{slug}.md` file should contain:
+
+- Problem description (what and why)
+- Chosen solution
+- Migration steps (if applicable)
+- Impact on other modules or systems
+- Configuration or rollout notes (if applicable)
 
 ## Correct Usage
 
@@ -102,7 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Eksport zamówień do CSV [TMP-456](https://jira.team-mate.pl/browse/TMP-456)
-- Nowy algorytm naliczania rabatów — szczegóły w [docs/discount-algorithm.md](docs/discount-algorithm.md)
+- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/2025-03-15-discount-algorithm.md](docs/changelog/2025-03-15-discount-algorithm.md)
 
 ### Changed
 - Zmieniono format odpowiedzi API dla listy produktów
@@ -208,7 +235,21 @@ project/
 ```markdown
 ### Added
 - Kompletna przebudowa silnika naliczania cen z uwzględnieniem rabatów grupowych,
-  promocji czasowych i kuponów  ❌ Complex change without docs/* link
+  promocji czasowych i kuponów  ❌ Complex change without docs/changelog/* link
+```
+
+### Extended description in wrong location
+
+```markdown
+### Added
+- Nowy algorytm naliczania rabatów — szczegóły w [docs/discount-algorithm.md](docs/discount-algorithm.md)  ❌ Not under docs/changelog/
+- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/discount-algorithm.md](docs/changelog/discount-algorithm.md)  ❌ Missing date prefix
+```
+
+**Correct:**
+```markdown
+### Added
+- Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/2025-03-15-discount-algorithm.md](docs/changelog/2025-03-15-discount-algorithm.md)
 ```
 
 ## Rules Summary
@@ -220,7 +261,7 @@ project/
 - **INF-005.5:** Change descriptions in Polish (preferred) or English — short and human-readable
 - **INF-005.6:** Each version with date in `YYYY-MM-DD` format
 - **INF-005.7:** Newest version on top
-- **INF-005.8:** Complex/critical changes with link to `docs/*.md`
+- **INF-005.8:** Complex/critical changes with link to an extended description under `docs/changelog/{YYYY-MM-DD}-{slug}.md` (inline entries stay in `CHANGELOG.md`; extended descriptions always live in `docs/changelog/` and are linked only when related)
 - **INF-005.9:** Task-related changes with Jira link (where applicable)
 - **INF-005.10:** Diff links at the bottom of the file
 
@@ -234,7 +275,7 @@ project/
 
 4. **Change tracking**: Jira links connect the changelog with the business context of the task.
 
-5. **Complexity documentation**: `docs/*` files for critical changes provide detailed context without cluttering the changelog.
+5. **Complexity documentation**: Extended descriptions under `docs/changelog/{date}-{slug}.md` keep `CHANGELOG.md` short and scannable while preserving full context for critical changes. The date-prefixed filename makes chronological ordering and release-based grouping obvious at a glance.
 
 6. **Semantic Versioning**: Pairing with SemVer makes it easy to understand the scale of changes between versions.
 
