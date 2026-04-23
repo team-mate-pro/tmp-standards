@@ -107,6 +107,7 @@ Each standard definition should clearly specify:
 | [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | SCRIPT |
 | [INF-005](definitions/infrastructure/INF-005-changelog-keepachangelog.md) | Changelog (Keep a Changelog) | AI |
 | [INF-006](definitions/infrastructure/INF-006-jira-task-standard.md) | Jira Task Standard | AI + MANUAL |
+| [INF-007](definitions/infrastructure/INF-007-client-feedback-document.md) | Client Feedback & Change Request Document | AI + MANUAL |
 | [SOLID-001](definitions/design-patterns/solid/SOLID-001-single-responsibility-principle.md) | Single Responsibility Principle (SRP) | AI |
 | [SOLID-002](definitions/design-patterns/solid/SOLID-002-open-closed-principle.md) | Open/Closed Principle (OCP) | AI |
 | [SOLID-003](definitions/design-patterns/solid/SOLID-003-liskov-substitution-principle.md) | Liskov Substitution Principle (LSP) | AI |

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Standard INF-007: wymagany, spójny format dokumentu „odpowiedzi / status / change request” dla klienta — YAML frontmatter z cover/toc, stabilna numeracja `[N.0]` / `[N.K]`, blockquote `> **Odpowiedź developera:**`, zamknięta taksonomia statusów (V1 – naprawa / V1 – zmiana wizualna / V1 – zmiana funkcjonalności / poza-spec / Doprecyzowanie / Informacja) rozdzielająca naprawy, zmiany i nowe funkcjonalności, tabela podsumowująca klikalnymi ID, oznaczenie ✅ tylko przy powiązanym wpisie w `CHANGELOG.md` (INF-005) i opisie w `docs/changelog/{date}-{version}-{slug}.md`; dokument biznesowy — bez żargonu technicznego
 - Standard INF-006: wymagana struktura zadań Jira (User Story / Task / Bug / Spike) — Kontekst, opening line per typ, Acceptance Criteria, DoR, DoD; zadania opisują obserwowalne zachowanie, implementacja zostaje po stronie programisty; gotowe szablony MD do wklejania do Jiry
 - INF-005.11: rozszerzone opisy w `docs/changelog/` muszą być biznesowe i deploymentowe (Problem → Rozwiązanie → Wdrożenie); zakaz ścieżek plików, nazw klas, liczników testów i walk-throughów implementacji — te treści trafiają do opisu MR lub ADR pod `docs/architecture/`
 - INF-005.12: „Released” = na produkcji. Wdrożenia na stage/test/dev/QA/preview nie promują wpisów z `[Unreleased]`; data w `## [X.Y.Z] - YYYY-MM-DD` to data wdrożenia na prod
