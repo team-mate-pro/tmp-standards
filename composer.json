@@ -1,6 +1,6 @@
 {
     "name": "team-mate-pro/tmp-standards",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "TMP coding standards, PHPStan rules, and architectural guidelines",
     "type": "phpstan-extension",
     "license": "proprietary",

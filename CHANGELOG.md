@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-04-23
+
 ### Added
 - Standard INF-007: wymagany, spójny format dokumentu „odpowiedzi / status / change request” dla klienta — YAML frontmatter z cover/toc, stabilna numeracja `[N.0]` / `[N.K]`, blockquote `> **Odpowiedź developera:**`, zamknięta taksonomia statusów (V1 – naprawa / V1 – zmiana wizualna / V1 – zmiana funkcjonalności / poza-spec / Doprecyzowanie / Informacja) rozdzielająca naprawy, zmiany i nowe funkcjonalności, tabela podsumowująca klikalnymi ID, oznaczenie ✅ tylko przy powiązanym wpisie w `CHANGELOG.md` (INF-005) i opisie w `docs/changelog/{date}-{version}-{slug}.md`; dokument biznesowy — bez żargonu technicznego
 - Standard INF-006: wymagana struktura zadań Jira (User Story / Task / Bug / Spike) — Kontekst, opening line per typ, Acceptance Criteria, DoR, DoD; zadania opisują obserwowalne zachowanie, implementacja zostaje po stronie programisty; gotowe szablony MD do wklejania do Jiry
@@ -79,7 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standard UCB-002: use case musi mieć metodę __invoke()
 - Standard INF-001: Makefile do lokalnego developmentu
 
-[Unreleased]: https://github.com/team-mate-pro/tmp-standards/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/team-mate-pro/tmp-standards/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.0.3...v1.1.0
