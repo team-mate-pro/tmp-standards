@@ -34,6 +34,10 @@ Every TMP project must have a CHANGELOG.md file in the repository root, followin
 
 11. **INF-005.11: Extended descriptions must be business- and deployment-focused**: Each `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` file follows the skeleton: Problem → Rozwiązanie/Solution → Wdrożenie/Deployment notes. Flag files that contain file paths, class names, method signatures, test counts, implementation walkthroughs, or "rejected alternatives" — that content belongs in the MR description, the diff, or an ADR under `docs/architecture/`.
 
+12. **INF-005.12: "Released" means production only**: A `## [X.Y.Z] - YYYY-MM-DD` section may exist only for code that is running on production. Stage, test, dev, QA, preview deployments do not promote entries out of `[Unreleased]`. The date in the heading is the production deploy date, not the merge date or stage-deploy date. Flag any clue that a versioned section was created from a non-production deploy (e.g. MR description says "deployed to stage", entries exist for code that was reverted before prod, version bump commit message mentions staging).
+
+13. **INF-005.13: Git tags mirror versioned sections**: Every `## [X.Y.Z]` heading in `CHANGELOG.md` must have a matching `vX.Y.Z` git tag. Conversely, no `vX.Y.Z` git tag may exist while the corresponding entries are still under `[Unreleased]`. The `vX.Y.Z` tag must point at the commit that introduces the `## [X.Y.Z]` heading (the release commit that also gets deployed to production).
+
 ## How to review
 
 1. Check if `CHANGELOG.md` exists in the project root.
@@ -46,11 +50,14 @@ Every TMP project must have a CHANGELOG.md file in the repository root, followin
 8. Check if any complex changes lack an extended description link. When such a link is present, verify it points to `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` — not to `docs/` directly, and with a valid date and version prefix (`unreleased` is a valid version for `[Unreleased]` entries).
 9. For every extended description file under `docs/changelog/`, skim its content and flag implementation detail noise: explicit file paths in `src/...`, class names with `::` method references, test counts like "19/19 green", or sections describing code walkthroughs. Suggest moving that content to the MR description or an ADR.
 10. Verify diff links exist at the bottom of the file.
+11. Run `git tag --list 'v*'` and cross-check with versioned sections: every `## [X.Y.Z]` heading must have a matching `vX.Y.Z` tag, and no `vX.Y.Z` tag may exist for entries still under `[Unreleased]`. Flag mismatches in both directions.
+12. Check `git log --oneline` around the version-bump commits: the commit introducing `## [X.Y.Z]` should be the one carrying the `vX.Y.Z` tag. If the tag lives on an unrelated commit, flag it.
+13. Look for signals that a version was cut from a non-production environment (MR descriptions, commit messages, or `docs/changelog/` files mentioning stage/test/preview as the release target). If found, flag INF-005.12.
 
 ## Output format
 
 For each violation found, report:
-- Which rule is violated (INF-005.1 through INF-005.11)
+- Which rule is violated (INF-005.1 through INF-005.13)
 - The specific line or entry that violates the rule
 - Suggested fix
 

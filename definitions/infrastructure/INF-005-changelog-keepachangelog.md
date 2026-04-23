@@ -35,7 +35,7 @@ Each version must include a date in `YYYY-MM-DD` format and an optional diff lin
 ## [1.2.0] - 2025-03-15
 ```
 
-Newest version always on top. An `[Unreleased]` section at the very top for changes not yet released.
+Newest version always on top. An `[Unreleased]` section at the very top for changes not yet released. See **Release Definition** below for what "released" means — stage/test deployments do **not** promote entries out of `[Unreleased]`.
 
 ### Change Categories — Required Order
 
@@ -73,6 +73,32 @@ Each entry is a single bullet point (`-`) with a short, understandable descripti
 [1.1.0]: https://github.com/org/repo/releases/tag/v1.1.0
 ```
 
+## Release Definition — What Counts as "Released"
+
+A version is considered **released** only when the code is running on **production**. Deployments to stage, test, dev, QA, preview, or any other non-production environment do **not** promote entries out of `[Unreleased]`.
+
+| State | Changelog location |
+|-------|--------------------|
+| Merged to `main`, not deployed anywhere | `[Unreleased]` |
+| Deployed to stage / test / preview / QA | `[Unreleased]` |
+| Deployed to production | `## [X.Y.Z] - YYYY-MM-DD` |
+
+The date in the version heading is the **production deployment date** — not the merge date, tag date, or stage-deployment date. The filename date segment in `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` follows the same rule (production release date; use literal `unreleased` while the change is still in `[Unreleased]`).
+
+### Release Workflow
+
+Promoting `[Unreleased]` to a versioned section is part of the production-deployment flow, not the merge-to-`main` flow:
+
+1. Decide the version bump following SemVer.
+2. In `CHANGELOG.md`: rename `## [Unreleased]` to `## [X.Y.Z] - YYYY-MM-DD` using the production deploy date, and add a fresh empty `## [Unreleased]` on top.
+3. Update the diff links at the bottom (`[Unreleased]` now compares against `vX.Y.Z`, add a new `[X.Y.Z]` link).
+4. Rename any `docs/changelog/{date}-unreleased-{slug}.md` files promoted in this release to `{production-date}-{X.Y.Z}-{slug}.md` and update the links in `CHANGELOG.md`.
+5. Commit the changelog bump (typical message: `X.Y.Z: <release summary>`).
+6. Tag that commit `vX.Y.Z` in git and push the tag (`git tag vX.Y.Z && git push origin vX.Y.Z`).
+7. Deploy that exact tagged commit to production.
+
+A `vX.Y.Z` git tag may exist **only** for versions that are actually on production. Do not tag stage/test releases. If a release is cut but rolled back before reaching production, delete the tag and move the entries back under `[Unreleased]` in a follow-up commit.
+
 ## When to Link to an Extended Description
 
 Not every change requires additional documentation. The main `CHANGELOG.md` stays short — extended descriptions live in `docs/changelog/` and are linked from the changelog entry only when the change qualifies.
@@ -87,8 +113,8 @@ Add a link to `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` when:
 
 Extended descriptions **must** be stored under `docs/changelog/` with the filename format `{YYYY-MM-DD}-{version}-{slug}.md`:
 
-- `{YYYY-MM-DD}` — release date matching the version where the change lands (for `[Unreleased]` entries use the planned release date or the date of the change)
-- `{version}` — target version where the change lands (e.g. `1.2.0`, `2.0.0-rc1`); for changes still in `[Unreleased]` use the literal string `unreleased`
+- `{YYYY-MM-DD}` — **production release date** matching the version where the change lands (for `[Unreleased]` entries use the date of the change; rename the file to the real production-deploy date at release time)
+- `{version}` — target version where the change lands (e.g. `1.2.0`, `2.0.0-rc1`); for changes still in `[Unreleased]` use the literal string `unreleased` (rename to the real version at release time)
 - `{slug}` — short kebab-case identifier describing the change (e.g. `pricing-algorithm`, `sms-notifications`, `auth-migration`)
 
 Examples:
@@ -264,6 +290,46 @@ project/
 - Nowy algorytm naliczania rabatów — szczegóły w [docs/changelog/2025-03-15-1.2.0-discount-algorithm.md](docs/changelog/2025-03-15-1.2.0-discount-algorithm.md)
 ```
 
+### Promoting a version before production deployment
+
+```markdown
+## [1.3.0] - 2026-04-20         ❌ Version section created after stage-only deploy
+### Added
+- Nowy moduł rozliczeń
+```
+
+**Problem:** The code is running only on stage. Per INF-005.12, until it hits production the entries must stay in `[Unreleased]`.
+
+**Correct:** Keep the entries in `[Unreleased]`; create `## [1.3.0] - <prod-date>` only on the production-deploy commit, and tag `v1.3.0` on that same commit.
+
+### Versioned section without a matching git tag
+
+```markdown
+## [1.3.0] - 2026-04-20
+### Added
+- Nowa funkcja
+```
+```bash
+$ git tag | grep v1.3.0
+# (empty)                       ❌ No v1.3.0 tag on any commit
+```
+
+**Problem:** A `## [X.Y.Z]` heading without a `vX.Y.Z` git tag means either the release is not really on production, or the tag was forgotten. Both violate INF-005.13.
+
+### Git tag without a matching versioned section
+
+```bash
+$ git tag
+v1.3.0                          ❌ Tagged but still under [Unreleased]
+```
+```markdown
+## [Unreleased]
+### Added
+- Nowa funkcja (już na produkcji jako v1.3.0)
+```
+
+**Problem:** A `vX.Y.Z` tag must correspond to a `## [X.Y.Z] - YYYY-MM-DD` section. Either promote the entries out of `[Unreleased]` or remove the tag if the release never reached production.
+
 ### Extended description with too much technical noise
 
 ```markdown
@@ -304,6 +370,8 @@ Stary algorytm nie obsługiwał rabatów grupowych i promocji czasowych łączni
 - **INF-005.11:** Extended descriptions are business- and deployment-focused (Problem → Rozwiązanie → Wdrożenie), without file paths, class names, test counts, or implementation walkthroughs — those belong in the MR description, the diff, or an ADR under `docs/architecture/`
 - **INF-005.9:** Task-related changes with Jira link (where applicable)
 - **INF-005.10:** Diff links at the bottom of the file
+- **INF-005.12:** "Released" means running on production. Stage, test, dev, QA, preview deployments do not promote entries out of `[Unreleased]`. The date in `## [X.Y.Z] - YYYY-MM-DD` is the production deploy date
+- **INF-005.13:** Every `## [X.Y.Z]` section must have a matching `vX.Y.Z` git tag on the commit that introduces the version bump; no `vX.Y.Z` tag may exist while the entries are still under `[Unreleased]`
 
 ## Rationale
 
@@ -318,6 +386,8 @@ Stary algorytm nie obsługiwał rabatów grupowych i promocji czasowych łączni
 5. **Complexity documentation**: Extended descriptions under `docs/changelog/{date}-{slug}.md` keep `CHANGELOG.md` short and scannable while preserving full context for critical changes. The date-prefixed filename makes chronological ordering and release-based grouping obvious at a glance.
 
 6. **Semantic Versioning**: Pairing with SemVer makes it easy to understand the scale of changes between versions.
+
+7. **Production-only releases**: Tying "released" to production deployment (not merge, not stage) makes the changelog a truthful record of what customers can actually use. Git tags mirror the same rule so a checkout of `vX.Y.Z` always matches what ran on prod — no ambiguity between "tagged", "merged", "on stage", and "on prod".
 
 ## Related Standards
 
