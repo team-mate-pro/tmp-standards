@@ -36,4 +36,9 @@ final readonly class InvalidWrongExceptionKey
     {
         $this->logger->log('error', 'Operation failed', ['ex' => $e]);
     }
+
+    public function logWithDynamicKey(\Throwable $e, string $key): void
+    {
+        $this->logger->error('Operation failed', [$key => $e]);
+    }
 }

@@ -52,7 +52,7 @@ final class UseCaseParameterMustBeInterfaceRuleTest extends RuleTestCase
             [__DIR__ . '/../../_Data/Fixtures/UseCase/ConcreteClassParamUseCase.php'],
             [
                 [
-                    "UseCase \"ConcreteClassParamUseCase\" parameter \$dto must use an interface, not concrete class \"TeamMatePro\\TmpStandards\\Tests\\_Data\\Fixtures\\UseCase\\ConcreteDto\".\n    💡 See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md",
+                    'UseCase "ConcreteClassParamUseCase" parameter $dto must use an interface, not concrete class "TeamMatePro\TmpStandards\Tests\_Data\Fixtures\UseCase\ConcreteDto".',
                     12,
                     'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md',
                 ],

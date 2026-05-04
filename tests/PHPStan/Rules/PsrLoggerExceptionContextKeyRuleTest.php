@@ -55,6 +55,10 @@ final class PsrLoggerExceptionContextKeyRuleTest extends RuleTestCase
                     "Throwable passed to PSR-3 logger context under key 'ex'; per PSR-3 §1.3 it MUST be under the 'exception' key." . $tip,
                     37,
                 ],
+                [
+                    "Throwable passed to PSR-3 logger context under key (dynamic); per PSR-3 §1.3 it MUST be under the 'exception' key." . $tip,
+                    42,
+                ],
             ]
         );
     }

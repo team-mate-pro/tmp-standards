@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-05-04
+
+### Added
+- Konwersja paczki na Symfony bundle (`TmpStandardsBundle`) — DI, autoload, integracja przez `bundles.php`/`config/bundles.php` Symfony 6.4/7.x; gotowe pod plug-in do dowolnej apki Symfony bez ręcznego rejestrowania komend
+- Komendy konsolowe `tmp:standard` i `tmp:standard:suite` — uruchamiają pojedynczy standard lub kompletny zestaw (suite) zdefiniowanych standardów z poziomu projektu konsumenta
+- Integracja z `team-mate-pro/tests-bundle` (`^1.22`) i komendą `tmp:tests` jako wrapperem na PHPUnit z progiem coverage (`--coverage 100`) — `composer tests` / `composer tests:unit` egzekwują 100% pokrycia
+- Konfiguracja PHPCS (`phpcs.xml`) i skrypty `composer phpcs` / `composer phpcs:fix`; integracja z PHPStan przez `phpstan-extension.neon`
+- Auto-render dokumentacji MD→PDF w GitLab CI (`render-md-pdf.yml` z `sh/tmp-infra`) — przy push na `main` każdy zmieniony `.md` jest renderowany do PDF szablonem `sh` (cover + TOC z front matter) i automatycznie commitowany z powrotem do brancha; wymaga zmiennej CI `GIT_PUSH_TOKEN` (Project Access Token, `write_repository`, masked); `CLAUDE.md` i `**/.claude/**` są wyłączone z renderowania
+- Migracja remote z GitHub (`team-mate-pro/tmp-standards`) na GitLab (`sh/tmp-standards`) — repozytorium pierwotne to teraz GitLab; GitHub pozostaje jako mirror publikujący przez `publish_public.yml`
+- Fixtures pokrywające pełną logikę reguły `PsrLoggerExceptionContextKeyRule` — dynamiczne nazwy metod, wywołania na nie-loggerach, kontekst spread/named, klucz dynamiczny — gwarantujące 100% line/method coverage
+
+### Changed
+- Wymóg `composer update --optimize-autoloader` w obrazie Dev/CI Dockerfile (zamiast `install`) z włączoną rozszerzeniem `pcov` i `memory_limit=512M` — niezbędne do pomiaru coverage w pipeline `tests:unit`
+- Makefile: dodane fallbackowe targety `phpcs` / `phpstan` / `tests_unit` używane gdy paczka `team-mate-pro/make` nie jest jeszcze zainstalowana — `make check` działa po świeżym checkoucie bez dodatkowej konfiguracji
+
+### Fixed
+- PHPStan reguły TMP nie były self-stosowane do kodu samej paczki; poprawiono ścieżkę include w `phpstan-extension.neon` i `phpstan-test.neon` tak, aby reguły lintowały też własny `src/`
+- Testy `ControllerActionMethodSuffixRuleTest`, `UseCaseMustHaveInvokeMethodRuleTest`, `UseCaseParameterMustBeInterfaceRuleTest` miały zdublowane oczekiwane linie `💡 See:` (raz w treści wiadomości, raz jako trzeci argument tipu) — ujednolicono format do jednej formy zgodnej z `RuleTestCase`
+
 ## [1.4.0] - 2026-04-23
 
 ### Added
@@ -81,7 +100,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standard UCB-002: use case musi mieć metodę __invoke()
 - Standard INF-001: Makefile do lokalnego developmentu
 
-[Unreleased]: https://github.com/team-mate-pro/tmp-standards/compare/v1.4.0...HEAD
+[Unreleased]: https://gitlab.team-mate.pl/sh/tmp-standards/-/compare/v1.5.0...HEAD
+[1.5.0]: https://gitlab.team-mate.pl/sh/tmp-standards/-/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/team-mate-pro/tmp-standards/compare/v1.1.0...v1.2.0

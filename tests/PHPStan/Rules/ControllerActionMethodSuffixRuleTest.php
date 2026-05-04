@@ -48,12 +48,10 @@ final class ControllerActionMethodSuffixRuleTest extends RuleTestCase
                 [
                     "Controller method \"ControllerWithoutActionSuffix::importAllExternalCustomers()\" must have the \"Action\" suffix (e.g. \"importAllExternalCustomersAction\").\n    💡 See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md",
                     14,
-                    'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],
                 [
                     "Controller method \"ControllerWithoutActionSuffix::externalCustomerLookup()\" must have the \"Action\" suffix (e.g. \"externalCustomerLookupAction\").\n    💡 See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md",
                     18,
-                    'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],
             ]
         );
@@ -67,7 +65,6 @@ final class ControllerActionMethodSuffixRuleTest extends RuleTestCase
                 [
                     "Controller method \"ControllerWithMixedMethods::createOrder()\" must have the \"Action\" suffix (e.g. \"createOrderAction\").\n    💡 See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md",
                     22,
-                    'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],
             ]
         );
