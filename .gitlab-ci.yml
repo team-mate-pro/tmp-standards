@@ -10,6 +10,12 @@
 
 variables:
   COMPOSE_FILE: docker-compose.gitlab.yml
+  # Render config consumed by /templates/library/render-md-pdf.yml.
+  # Skip Claude internal docs (CLAUDE.md, .claude/commands/*).
+  TEMPLATE: "sh"
+  EXTRA_EXCLUDES: |
+    CLAUDE.md
+    **/.claude/**
 
 include:
   - project: 'sh/tmp-infra'
@@ -18,3 +24,9 @@ include:
       - '/templates/common.yml'
       - '/templates/library/static-analysis.yml'
       - '/templates/library/publish_public.yml'
+      # On push to main, render every changed .md → .pdf using the sh
+      # template (cover page + TOC come from each file's front matter)
+      # and commit/push the PDFs back to the branch.
+      # Requires CI/CD variable GIT_PUSH_TOKEN (Project Access Token,
+      # write_repository scope, masked).
+      - '/templates/library/render-md-pdf.yml'

@@ -1,3 +1,15 @@
+---
+title: "UCB-002: UseCase Must Have Invoke Method"
+subtitle: "Use Case Bundle standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # UCB-002: UseCase Must Have Invoke Method
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-002-use-case-invoke-method.md

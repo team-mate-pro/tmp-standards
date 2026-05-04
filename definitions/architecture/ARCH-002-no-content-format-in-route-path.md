@@ -1,3 +1,15 @@
+---
+title: "ARCH-002: No Content Format in Route Paths"
+subtitle: "Architecture standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # ARCH-002: No Content Format in Route Paths
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/architecture/ARCH-002-no-content-format-in-route-path.md

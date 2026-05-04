@@ -1,3 +1,15 @@
+---
+title: "ARCH-001: REST API Route Naming Convention"
+subtitle: "Architecture standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # ARCH-001: REST API Route Naming Convention
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/architecture/ARCH-001-rest-api-route-naming.md

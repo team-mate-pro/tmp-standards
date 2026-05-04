@@ -1,3 +1,15 @@
+---
+title: "INF-004: GitLab Merge Request Policy"
+subtitle: "Infrastructure standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # INF-004: GitLab Merge Request Policy
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/infrastructure/INF-004-gitlab-merge-request-policy.md

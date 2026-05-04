@@ -1,3 +1,15 @@
+---
+title: "UCB-006: Authorization Must Be Handled in Request Class"
+subtitle: "Use Case Bundle standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # UCB-006: Authorization Must Be Handled in Request Class
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-006-authorization-in-request.md

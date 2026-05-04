@@ -1,3 +1,15 @@
+---
+title: "UCB-001: UseCase Parameters Must Be Interfaces"
+subtitle: "Use Case Bundle standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # UCB-001: UseCase Parameters Must Be Interfaces
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md

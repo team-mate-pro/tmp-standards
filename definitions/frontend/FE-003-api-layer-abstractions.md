@@ -1,3 +1,15 @@
+---
+title: "FE-003: API Layer Abstractions and Type Safety"
+subtitle: "Frontend standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # FE-003: API Layer Abstractions and Type Safety
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/frontend/FE-003-api-layer-abstractions.md

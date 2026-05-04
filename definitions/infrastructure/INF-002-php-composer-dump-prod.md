@@ -1,3 +1,15 @@
+---
+title: "INF-002: Composer Environment Dump for Production Builds"
+subtitle: "Infrastructure standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # INF-002: Composer Environment Dump for Production Builds
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/infrastructure/INF-002-php-composer-dump-prod.md

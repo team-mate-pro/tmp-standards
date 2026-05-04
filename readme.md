@@ -1,3 +1,15 @@
+---
+title: "TMP Standards"
+subtitle: "Composer package aggregating coding standards, architectural guidelines and PHPStan rules"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # TMP Standards
 
 A Composer package aggregating coding standards, architectural guidelines, and PHPStan rules for TMP organization.

@@ -1,3 +1,15 @@
+---
+title: "FE-002: Component data-component Attribute"
+subtitle: "Frontend standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # FE-002: Component data-component Attribute
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/frontend/FE-002-component-data-attribute.md

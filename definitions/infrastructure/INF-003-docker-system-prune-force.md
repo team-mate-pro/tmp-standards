@@ -1,3 +1,15 @@
+---
+title: "INF-003: Docker System Prune Non-Interactive Mode"
+subtitle: "Infrastructure standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # INF-003: Docker System Prune Non-Interactive Mode
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/infrastructure/INF-003-docker-system-prune-force.md

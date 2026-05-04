@@ -1,3 +1,15 @@
+---
+title: "TEST-002: Behavior-Focused Tests with Given-When-Then"
+subtitle: "Testing standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # TEST-002: Behavior-Focused Tests with Given-When-Then
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/tests/TEST-002-behavior-focused-given-when-then.md

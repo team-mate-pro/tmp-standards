@@ -1,3 +1,15 @@
+---
+title: "TEST-001: Unified PHPUnit Test Structure"
+subtitle: "Testing standard"
+author: "TMP Standards"
+version: "v1.0"
+date: 2026-05-04
+template: sh
+cover: true
+toc: true
+toc-depth: 3
+---
+
 # TEST-001: Unified PHPUnit Test Structure
 
 **Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/tests/TEST-001-unified-phpunit-structure.md
