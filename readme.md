@@ -105,6 +105,7 @@ The standard name can be extended with a longer description.
 | `CC`   | Clean Code - general coding best practices |
 | `INF`  | Infrastructure - local development, CI/CD, tooling |
 | `SOLID` | Design Patterns - SOLID principles |
+| `TEST` | Tests - test structure and patterns |
 | `UCB`  | UseCase Bundle - rules for UseCase pattern |
 
 ### Requirements
@@ -120,7 +121,12 @@ Each standard definition should clearly specify:
 | Code | Title | Check Method |
 |------|-------|--------------|
 | [CC-001](definitions/clean-code/CC-001-no-persist-in-creational-patterns.md) | No Persistence in Creational Patterns | AI |
+| [CC-002](definitions/clean-code/CC-002-fail-fast.md) | Fail Fast | AI |
+| [CC-003](definitions/clean-code/CC-003-psr3-exception-logging.md) | PSR-3 Exception Logging Context | PHPSTAN + AI |
 | [INF-001](definitions/infrastructure/INF-001-infrastructure-local-makefile.md) | Local Development Makefile | SCRIPT |
+| [INF-005](definitions/infrastructure/INF-005-changelog-keepachangelog.md) | Changelog (Keep a Changelog) | AI |
+| [INF-006](definitions/infrastructure/INF-006-jira-task-standard.md) | Jira Task Standard | AI + MANUAL |
+| [INF-007](definitions/infrastructure/INF-007-client-feedback-document.md) | Client Feedback & Change Request Document | AI + MANUAL |
 | [SOLID-001](definitions/design-patterns/solid/SOLID-001-single-responsibility-principle.md) | Single Responsibility Principle (SRP) | AI |
 | [SOLID-002](definitions/design-patterns/solid/SOLID-002-open-closed-principle.md) | Open/Closed Principle (OCP) | AI |
 | [SOLID-003](definitions/design-patterns/solid/SOLID-003-liskov-substitution-principle.md) | Liskov Substitution Principle (LSP) | AI |
@@ -270,6 +276,7 @@ includes:
 | `UseCaseMustHaveInvokeMethodRule` | `useCase.missingInvoke` | [UCB-002](definitions/use-case-bundle/UCB-002-use-case-invoke-method.md) |
 | `UseCaseParameterMustBeInterfaceRule` | `useCase.parameterMustBeInterface` | [UCB-001](definitions/use-case-bundle/UCB-001-use-case-abstract-dto.md) |
 | `ControllerActionMethodSuffixRule` | `controller.actionMethodSuffix` | [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md) |
+| `PsrLoggerExceptionContextKeyRule` | `logger.exceptionContextKey` | [CC-003](definitions/clean-code/CC-003-psr3-exception-logging.md) |
 
 ### Disabling Rules
 
@@ -301,6 +308,7 @@ Available rule identifiers:
 | `useCase.missingInvoke` | `UseCaseMustHaveInvokeMethodRule` |
 | `useCase.parameterMustBeInterface` | `UseCaseParameterMustBeInterfaceRule` |
 | `controller.actionMethodSuffix` | `ControllerActionMethodSuffixRule` |
+| `logger.exceptionContextKey` | `PsrLoggerExceptionContextKeyRule` |
 
 You can also ignore errors inline with PHPStan comments:
 
@@ -380,6 +388,23 @@ final class CustomerController extends AbstractRestApiController
 
 See [UCB-005](definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md) for detailed documentation.
 
+#### PsrLoggerExceptionContextKeyRule
+
+When a `\Throwable` is passed to a PSR-3 `LoggerInterface` call (`error`, `critical`, `warning`, `notice`, `info`, `debug`, `log`), it **must** live under the context key `'exception'`. PSR-3 §1.3 reserves that key so Sentry/Monolog can extract the full stack trace and previous-exception chain. Any other key (`'error'`, `'throwable'`, `'e'`, `'ex'`, numeric) is flagged.
+
+```php
+// CORRECT
+$this->logger->error('Payment failed', ['exception' => $e, 'orderId' => $order->getId()]);
+
+// VIOLATION — wrong key
+$this->logger->error('Payment failed', ['error' => $e]);
+
+// VIOLATION — numeric key
+$this->logger->error('Payment failed', [$e]);
+```
+
+See [CC-003](definitions/clean-code/CC-003-psr3-exception-logging.md) for detailed documentation (including the other CC-003.2 – CC-003.6 sub-rules, enforced via the AI prompt).
+
 ## Development
 
 ### Requirements
@@ -407,6 +432,83 @@ make phpcs          # Code style
 make phpstan        # Static analysis
 make tests_unit     # Unit tests with coverage
 make fix            # Auto-fix code style
+```
+
+### Writing Definitions
+
+All definition files (`definitions/**/*.md`) **must be written in English**. This ensures consistency across the codebase and makes definitions accessible to all team members.
+
+A definition file must follow this structure:
+
+```markdown
+# {PREFIX}-{NUMBER}: {Title in English}
+
+**Documentation:** https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/{category}/{FILENAME}.md
+
+## Check Method
+| Method | Command |
+|--------|---------|
+| **{METHOD}** | `{command}` |
+
+## Definition
+{Clear description of the standard in English}
+
+## Correct Usage
+{Code examples showing compliant implementation}
+
+## Violation
+{Code examples showing what to avoid}
+
+## Rationale
+{Numbered list explaining why this standard exists}
+```
+
+**Checklist for new definitions:**
+
+1. Create `definitions/{category}/{PREFIX}-{NUMBER}-{slug}.md` — the definition itself (in English)
+2. Create the check method file alongside it:
+   - PHPStan rule → `src/PHPStan/Rules/` + test in `tests/PHPStan/Rules/`
+   - AI prompt → `{PREFIX}-{NUMBER}-{slug}.prompt.txt`
+   - Script → `{PREFIX}-{NUMBER}-{slug}.sh`
+3. Add the standard to the "Available Standards" table in this `readme.md`
+4. Add a changelog entry in `CHANGELOG.md` under `[Unreleased]`
+
+### Maintaining the Changelog
+
+This project follows [INF-005](definitions/infrastructure/INF-005-changelog-keepachangelog.md) — the Keep a Changelog standard.
+
+**When to update:** Every change that adds, modifies, or removes a standard must be recorded in `CHANGELOG.md`.
+
+**How to update:**
+
+1. Open `CHANGELOG.md` and find the `## [Unreleased]` section at the top
+2. Add your entry under the correct category (in this order, skip empty ones):
+   - `### Added` — new standards, new rules, new features
+   - `### Changed` — modifications to existing standards or rules
+   - `### Deprecated` — standards marked for removal
+   - `### Removed` — deleted standards or rules
+   - `### Fixed` — bug fixes in rules or scripts
+   - `### Security` — security-related fixes
+3. Write a short, human-readable description in Polish (preferred) or English
+4. Link to Jira task if applicable: `[TMP-123](https://jira.team-mate.pl/browse/TMP-123)`
+5. Link to `docs/*.md` for complex/critical changes
+
+**When releasing a version:**
+
+1. Replace `## [Unreleased]` content with a versioned header: `## [X.Y.Z] - YYYY-MM-DD`
+2. Add a fresh empty `## [Unreleased]` section above it
+3. Add the diff link at the bottom of the file
+
+**Example workflow:**
+
+```markdown
+## [Unreleased]
+
+### Added
+- Standard INF-006: nowy standard XYZ [TMP-999](https://jira.team-mate.pl/browse/TMP-999)
+
+### Fixed
+- Poprawiono regułę PHPStan UCB-001 dla nullable typów
 ```
 
 ## License

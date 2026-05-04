@@ -6,22 +6,22 @@ GitLab CI/CD pipelines for PHP/Symfony projects must follow a consistent structu
 
 ## Rules to check
 
-1. **Workflow must skip HOTFIX commits**: The `.gitlab-ci.yml` must include a `workflow:rules` block (or per-job rule) that prevents pipeline execution when `$CI_COMMIT_TITLE =~ /^HOTFIX:/`. Missing this means emergency hotfixes trigger full pipeline runs.
+1. **INF-003.1: Workflow must skip HOTFIX commits**: The `.gitlab-ci.yml` must include a `workflow:rules` block (or per-job rule) that prevents pipeline execution when `$CI_COMMIT_TITLE =~ /^HOTFIX:/`. Missing this means emergency hotfixes trigger full pipeline runs.
 
-2. **Stages must be defined in order**: The pipeline must define exactly four stages: `static_analysis`, `test`, `build`, `deploy` — in that order.
+2. **INF-003.2: Stages must be defined in order**: The pipeline must define exactly four stages: `static_analysis`, `test`, `build`, `deploy` — in that order.
 
-3. **Test/analysis jobs run on MR + direct push only**: Jobs in `static_analysis` and `test` stages must use rules that match:
+3. **INF-003.3: Test/analysis jobs run on MR + direct push only**: Jobs in `static_analysis` and `test` stages must use rules that match:
    - `$CI_PIPELINE_SOURCE == "merge_request_event"` (open MR)
    - `$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/ && $CI_OPEN_MERGE_REQUESTS == null` (direct push, no open MR)
    They must NOT run on every push to protected branches unconditionally.
 
-4. **Build/deploy run on protected branches only**: Build and deploy jobs must be restricted to protected branches (`main`, `master`, `stage`) and must NOT run on MR events.
+4. **INF-003.4: Build/deploy run on protected branches only**: Build and deploy jobs must be restricted to protected branches (`main`, `master`, `stage`) and must NOT run on MR events.
 
-5. **Docker-in-Docker configuration**: The pipeline must configure Docker-in-Docker with required variables (`DOCKER_HOST`, `DOCKER_DRIVER`, `DOCKER_TLS_CERTDIR`).
+5. **INF-003.5: Docker-in-Docker configuration**: The pipeline must configure Docker-in-Docker with required variables (`DOCKER_HOST`, `DOCKER_DRIVER`, `DOCKER_TLS_CERTDIR`).
 
-6. **Both app and proxy services must have build jobs**: Each protected branch environment (production, stage) must have separate build jobs for `app` and `proxy` services.
+6. **INF-003.6: Both app and proxy services must have build jobs**: Each protected branch environment (production, stage) must have separate build jobs for `app` and `proxy` services.
 
-7. **Functional tests must be manual and must not allow failure**: Functional tests (requiring database/external services) must use `when: manual` and must NOT use `allow_failure: true`. When triggered manually, they must block the pipeline on failure.
+7. **INF-003.7: Functional tests must be manual and must not allow failure**: Functional tests (requiring database/external services) must use `when: manual` and must NOT use `allow_failure: true`. When triggered manually, they must block the pipeline on failure.
 
 ## How to review
 
@@ -38,7 +38,7 @@ GitLab CI/CD pipelines for PHP/Symfony projects must follow a consistent structu
 
 For each violation found, report:
 - File path and line number (or job name)
-- Which rule is violated (1-7)
+- Which rule is violated (INF-003.1 through INF-003.7)
 - The current situation (brief description)
 - Suggested fix
 

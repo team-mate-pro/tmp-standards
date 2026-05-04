@@ -16,6 +16,12 @@ services:
 
   ## --- CI/CD services (used by shared templates) ---
 
+  lib:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: lib
+
   tests_phpcs:
     build:
       context: .

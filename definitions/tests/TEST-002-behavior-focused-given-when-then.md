@@ -31,7 +31,7 @@ Tests must focus on **observable behaviors** (inputs → outputs, state changes,
 
 ## Rules
 
-### 1. Method Naming — Readable as a Sentence
+### TEST-002.1: Method Naming — Readable as a Sentence
 
 Test method names must be **pure camelCase without underscores or spaces**. They must be descriptive enough that PHPUnit `--testdox` output reads like a book describing how the system works.
 
@@ -61,7 +61,7 @@ processOrder                                  // what about the order? what outc
 
 The goal: a new developer running `composer tests:unit` should understand the system's business rules **just by reading the test output**, without opening a single test file.
 
-### 2. Inline Comments
+### TEST-002.2: Inline Comments
 
 Each test must have three clearly separated sections with comments:
 
@@ -71,7 +71,7 @@ Each test must have three clearly separated sections with comments:
 // Then: <describe the expected observable outcome>
 ```
 
-### 3. Comment Block Sections
+### TEST-002.3: Comment Block Sections
 
 Related test methods must be grouped using comment separators:
 
@@ -81,7 +81,7 @@ Related test methods must be grouped using comment separators:
 // ==========================================
 ```
 
-### 4. Test What, Not How
+### TEST-002.4: Test What, Not How
 
 - **DO** test observable behavior: return values, state changes, dispatched events, logged messages, thrown exceptions
 - **DO NOT** test internal implementation: private method calls, internal variable values, execution order of internal steps

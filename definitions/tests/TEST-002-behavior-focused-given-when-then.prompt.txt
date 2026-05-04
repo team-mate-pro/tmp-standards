@@ -6,7 +6,7 @@ Tests must focus on observable behaviors (inputs → outputs, state changes, sid
 
 ## Rules to check
 
-1. **Method naming — descriptive camelCase, no underscores, no GWT keywords**: Test method names must be pure camelCase without underscores or spaces. The keywords `given`, `when`, `then` are NOT allowed in method names — they belong only in inline comments. The name must be descriptive enough that PHPUnit `--testdox` output reads like a behavioral specification. Violations include:
+1. **TEST-002.1: Method naming — descriptive camelCase, no underscores, no GWT keywords**: Test method names must be pure camelCase without underscores or spaces. The keywords `given`, `when`, `then` are NOT allowed in method names — they belong only in inline comments. The name must be descriptive enough that PHPUnit `--testdox` output reads like a behavioral specification. Violations include:
    - Underscores in name: `givenOrder_whenPersisted_thenWorks()`, `test_geocode()`
    - GWT keywords in name: `givenNewOrder...()`, `whenPersisted...()`, `thenSetsCoordinates...()`
    - `test` prefix: `testGeocode()`, `testCoordinatesAreSet()`
@@ -14,9 +14,9 @@ Tests must focus on observable behaviors (inputs → outputs, state changes, sid
    - Words like "works", "correct", "result", "success", "valid" without specifics — the name must describe the concrete business outcome
    - Good examples: `newOrderWithAddressGetsGeocodedCoordinatesOnPersist()`, `paidOrderChangesStatusToPaid()`, `expiredPromoCodeThrowsExceptionWhenAppliedToCart()`
 
-2. **Inline GWT comments**: Each test method must contain `// Given:`, `// When:`, `// Then:` comments separating the three phases. Missing any of these comments is a violation.
+2. **TEST-002.2: Inline GWT comments**: Each test method must contain `// Given:`, `// When:`, `// Then:` comments separating the three phases. Missing any of these comments is a violation.
 
-3. **Comment block sections**: Related test methods must be grouped under comment separators:
+3. **TEST-002.3: Comment block sections**: Related test methods must be grouped under comment separators:
    ```
    // ==========================================
    // <Section description>
@@ -24,7 +24,7 @@ Tests must focus on observable behaviors (inputs → outputs, state changes, sid
    ```
    A test class with more than 3 test methods and no section separators is a violation.
 
-4. **Behavior over implementation**: Tests must assert on observable outcomes (return values, entity state, thrown exceptions, logged messages). Tests that only verify internal method calls without asserting observable outcomes are violations.
+4. **TEST-002.4: Behavior over implementation**: Tests must assert on observable outcomes (return values, entity state, thrown exceptions, logged messages). Tests that only verify internal method calls without asserting observable outcomes are violations.
 
 ## How to review
 
@@ -40,7 +40,7 @@ Scan all `*Test.php` files in the project. For each file, check:
 
 For each violation found, report:
 - File path and line number
-- Which rule is violated (1-4)
+- Which rule is violated (TEST-002.1 through TEST-002.4)
 - The current code (brief snippet)
 - Suggested fix
 

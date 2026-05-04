@@ -1,6 +1,6 @@
 {
     "name": "team-mate-pro/tmp-standards",
-    "version": "1.1.1",
+    "version": "1.4.0",
     "description": "TMP coding standards, PHPStan rules, and architectural guidelines",
     "type": "symfony-bundle",
     "license": "proprietary",
@@ -20,10 +20,13 @@
         "symfony/process": "^6.4 || ^7.0"
     },
     "require-dev": {
+        "phpstan/extension-installer": "*",
         "phpstan/phpstan-phpunit": "^1.0 || ^2.0",
         "phpunit/phpunit": "^10.0 || ^11.0",
+        "psr/log": "^3.0",
         "squizlabs/php_codesniffer": "^3.10",
         "symfony/framework-bundle": "^6.4 || ^7.0",
+        "team-mate-pro/make": "^1.0",
         "team-mate-pro/tests-bundle": "^1.22"
     },
     "autoload": {
@@ -33,7 +36,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "TeamMatePro\\TmpStandards\\Tests\\": "tests/"
+            "TeamMatePro\\TmpStandards\\Tests\\": "tests/",
+            "TeamMatePro\\UseCaseBundle\\": "tests/_Data/Fixtures/UseCaseBundle/"
         },
         "classmap": [
             "tests/_Data/Fixtures/"
@@ -59,10 +63,13 @@
         "phpstan": "php vendor/phpstan/phpstan/phpstan analyse --memory-limit=1G",
         "phpstan:baseline": "php vendor/phpstan/phpstan/phpstan analyse --memory-limit=1G --generate-baseline",
         "phpcs": "@phpcs:check",
-        "phpcs:check": "php vendor/bin/phpcs --exclude=Generic.Files.LineLength",
-        "phpcs:fix": "php vendor/bin/phpcbf --exclude=Generic.Files.LineLength"
+        "phpcs:check": "php vendor/bin/phpcs --standard=phpcs.xml --exclude=Generic.Files.LineLength",
+        "phpcs:fix": "php vendor/bin/phpcbf --standard=phpcs.xml --exclude=Generic.Files.LineLength"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }

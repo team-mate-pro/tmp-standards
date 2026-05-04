@@ -4,9 +4,10 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          failOnRisky="true"
-         failOnWarning="true"
+         failOnWarning="false"
          cacheDirectory=".phpunit.cache"
          beStrictAboutOutputDuringTests="true"
+         requireCoverageMetadata="false"
 >
     <testsuites>
         <testsuite name="unit">

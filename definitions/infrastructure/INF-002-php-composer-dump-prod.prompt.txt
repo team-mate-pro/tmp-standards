@@ -6,18 +6,18 @@ Production and staging Docker builds for PHP/Symfony applications must include `
 
 ## Rules to check
 
-1. **Production stage must have `composer dump-env prod`**: Any Dockerfile stage that sets `APP_ENV=prod` or is named `prod` must include `RUN composer dump-env prod`. Missing this command means every request will parse `.env` files at runtime.
+1. **INF-002.1: Production stage must have `composer dump-env prod`**: Any Dockerfile stage that sets `APP_ENV=prod` or is named `prod` must include `RUN composer dump-env prod`. Missing this command means every request will parse `.env` files at runtime.
 
-2. **Staging stage must have `composer dump-env stage`**: Any Dockerfile stage that sets `APP_ENV=stage` or is named `stage` must include `RUN composer dump-env stage`.
+2. **INF-002.2: Staging stage must have `composer dump-env stage`**: Any Dockerfile stage that sets `APP_ENV=stage` or is named `stage` must include `RUN composer dump-env stage`.
 
-3. **Environment parameter must match stage**: The environment passed to `composer dump-env` must match the target environment:
+3. **INF-002.3: Environment parameter must match stage**: The environment passed to `composer dump-env` must match the target environment:
    - `APP_ENV=prod` → `composer dump-env prod`
    - `APP_ENV=stage` → `composer dump-env stage`
    Mismatched environments (e.g., `APP_ENV=prod` with `composer dump-env dev`) is a violation.
 
-4. **Command must appear after composer install**: The `composer dump-env` command must appear after `composer install` in the Dockerfile, as it requires dependencies to be installed.
+4. **INF-002.4: Command must appear after composer install**: The `composer dump-env` command must appear after `composer install` in the Dockerfile, as it requires dependencies to be installed.
 
-5. **Development stages should NOT use dump-env**: Stages with `APP_ENV=dev` or named `dev` should NOT include `composer dump-env` as development environments need flexibility to modify `.env` files without rebuilding.
+5. **INF-002.5: Development stages should NOT use dump-env**: Stages with `APP_ENV=dev` or named `dev` should NOT include `composer dump-env` as development environments need flexibility to modify `.env` files without rebuilding.
 
 ## How to review
 
@@ -32,7 +32,7 @@ Scan all `Dockerfile` and `*.dockerfile` files in the project. For each file:
 
 For each violation found, report:
 - File path and line number (or stage name)
-- Which rule is violated (1-5)
+- Which rule is violated (INF-002.1 through INF-002.5)
 - The current situation (brief description)
 - Suggested fix
 

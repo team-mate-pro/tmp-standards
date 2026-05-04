@@ -1,0 +1,82 @@
+You are reviewing a client-facing feedback / change-request document against the INF-007 Client Feedback & Change Request Document standard.
+
+INPUT
+-----
+You will be pointed at a Markdown file under `docs/{YYYY-MM-DD-event-slug}/{YYYY-MM-DD-document-slug}.md`. The document may be in Polish or English. If there is no such file in the project, stop and report that the project has no client-feedback document to review.
+
+STANDARD SUMMARY
+----------------
+A client feedback document aggregates questions raised by the client, our answers, the status per item, and links to Jira and to CHANGELOG.md. It is written for business, not for engineers. It complements but does not replace CHANGELOG.md (INF-005) and Jira tickets (INF-006).
+
+Required top-level structure (in this order):
+1. YAML frontmatter with cover/toc metadata.
+2. H1 title.
+3. Draft banner (only while version ends with `— wersja robocza` / `— draft`).
+4. Introduction (1–3 paragraphs).
+5. Conventions / Legend (numbering scheme + icons).
+6. Thematic sections `## [N.0] TOPIC` with questions.
+7. Summary table listing every `[N.K]`.
+
+RULES TO CHECK
+--------------
+1. **INF-007.1** — YAML frontmatter is present and contains `title`, `author`, `version`, `date`, `lang`, `cover: true`, `toc: true`. `subtitle` and `template` are optional.
+2. **INF-007.2** — `version` matches `v\d+\.\d+`, optionally followed by ` — wersja robocza` / ` — draft`. `date` is in `YYYY-MM-DD`.
+3. **INF-007.3** — File path is `docs/{YYYY-MM-DD}-{event-slug}/{YYYY-MM-DD}-{document-slug}.md`. Assets live in a sibling `assets/` folder within the event directory.
+4. **INF-007.4** — If `version` contains a draft suffix, the body has a prominent `> [!WARNING]` draft banner near the top. If `version` has no draft suffix, no draft banner remains.
+5. **INF-007.5** — The document has an introduction of 1–3 paragraphs between the title/banner and the first `## [N.0]` section. It names the source event and the perspectives covered.
+6. **INF-007.6** — A conventions / legend callout explains `[N.0]` / `[N.K]` numbering and any icons used (at minimum `✅`).
+7. **INF-007.7** — Every thematic section is `## [N.0] TOPIC` (uppercase topic, section number like `[1.0]`, `[2.0]`, …). Numbers are contiguous (no gaps like `[1.0]`, `[4.0]`).
+8. **INF-007.8** — Every question:
+   - Has an anchor `<a id="q-N-K"></a>` directly above it.
+   - Opens with `*Pytanie:* [N.K] …` (or `*Question:* [N.K] …` for English documents).
+   - Is followed by a blockquote starting with `> **Odpowiedź developera:**` (or `> **Developer's answer:**`).
+9. **INF-007.9** — `[N.K]` numbers are unique across the document and within each section form a contiguous sequence `[N.1]`, `[N.2]`, … Numbering never restarts in the middle of the document.
+10. **INF-007.10** — Answers must be in business language. Flag any of the following appearing in a developer-answer blockquote:
+    - Class / interface / trait / enum names (`CamelCase` identifiers followed by `::`, `()`, `<>`, or the words `class`, `interface`, `enum`).
+    - File paths or extensions such as `src/…`, `.php`, `.yaml`, `.sql`, `.twig`, `.vue`.
+    - SQL fragments (`SELECT`, `UPDATE`, `INSERT`, `CREATE TABLE`, `ALTER`, `JOIN …`).
+    - Framework / library vendor names (`Symfony`, `Doctrine`, `Laravel`, `Eloquent`, `PHPStan`, `composer`, `Messenger`, `React`, `Vue`, `nginx`, `redis`, `postgres`, …).
+    - HTTP status codes, endpoint URLs, method signatures, migration file names.
+    Do not flag system names that are clearly part of the client's own business vocabulary (e.g. `Atinea`, `Serum`, `TCOP`, `CRM`, `DH`, `SSO`) — these are allowed.
+11. **INF-007.11** — Items that add a new capability must use `Nowa funkcjonalność`, not `V1 – naprawa`. Items that are pure bug fixes must not use `Nowa funkcjonalność`. Flag obvious mismatches.
+12. **INF-007.12** — Every row in the summary table uses exactly one status from this closed set:
+    - `V1 – naprawa`
+    - `V1 – drobna zmiana wizualna`
+    - `V1 – zmiana funkcjonalności`
+    - `Drobna zmiana nie ujęta w specyfikacji`
+    - `Nowa funkcjonalność`
+    - `Nie ujęte w specyfikacji`
+    - `Doprecyzowanie`
+    - `Informacja`
+    The status may be prefixed with `✅` when the item is addressed. Any other value is a violation.
+13. **INF-007.13** — Every Jira link that appears in a developer-answer is also in the summary table row for that question (and vice versa).
+14. **INF-007.14** — For every question marked `✅ Zaadresowane` in the body (or `✅ …` in the summary):
+    - There is a matching entry in `CHANGELOG.md` at the repository root (under `[Unreleased]` or a version section) describing the same change, per INF-005.
+    - If the answer links to an extended description, the linked file exists under `docs/changelog/{YYYY-MM-DD}-{version}-{slug}.md` and the filename matches INF-005.8 (where `{version}` is either `unreleased` while in `[Unreleased]` or the real version once released).
+15. **INF-007.15** — The document ends with a `## Podsumowanie — status zagadnień` (or `## Summary — issue status`) section containing a table with columns `ID | Zagadnienie | Jira | Status`. Every `[N.K]` question that exists in the body has exactly one row; no extra rows, no missing rows. The ID cell is formatted as `[[N.K](#q-N-K)]`.
+16. **INF-007.16** — When the same business topic appears in multiple questions, at most one of them carries the full answer; the others link back (`patrz [N.K]` or similar). Flag cases where two questions give different answers to the same topic.
+17. **INF-007.17** — If the document has been revised after initial publication (version > `v1.0`), a `## Historia zmian dokumentu` / `## Document changelog` section near the end lists each revision on a single line.
+
+HOW TO REVIEW
+-------------
+1. Locate the document under `docs/`. If multiple client-feedback documents exist, review each one separately.
+2. Read and parse the YAML frontmatter — check INF-007.1 and INF-007.2.
+3. Verify the file path against INF-007.3.
+4. Scan the body in order and check INF-007.4 (draft banner) through INF-007.9 (numbering).
+5. For every developer answer, check INF-007.10 (language) and INF-007.11 (feature/fix labelling).
+6. Parse the summary table and validate INF-007.12 / INF-007.13 / INF-007.15.
+7. For every `✅` marker, open `CHANGELOG.md` at the project root and confirm a matching entry exists (INF-007.14). Verify any linked `docs/changelog/*.md` filename matches INF-005.8.
+8. Check cross-references between questions (INF-007.16) and the document changelog (INF-007.17).
+
+OUTPUT FORMAT
+-------------
+Report violations grouped by rule identifier. For each violation include:
+
+- The rule identifier (INF-007.1 through INF-007.17).
+- The file and line number where the violation occurs.
+- A short, concrete description of what is wrong.
+- A concrete suggestion of how to fix it (one sentence, business language — do not propose code).
+
+If the document is fully compliant, answer with a single line: `INF-007: OK — {document path}`.
+
+Do not list matters outside the INF-007 scope (style, typos, wording preferences). Stick to the rule identifiers above.

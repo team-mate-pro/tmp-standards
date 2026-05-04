@@ -28,7 +28,7 @@ This follows the HTTP content negotiation mechanism defined in [RFC 7231 §5.3](
 
 ## Rules
 
-### 1. No Format Indicators in Route Paths
+### ARCH-002.1: No Format Indicators in Route Paths
 
 Route paths must not contain suffixes or segments that describe the response format.
 
@@ -51,7 +51,7 @@ Route paths must not contain suffixes or segments that describe the response for
 /api/settlements/{id}
 ```
 
-### 2. Resources and Sub-resources Are Valid Path Segments
+### ARCH-002.2: Resources and Sub-resources Are Valid Path Segments
 
 The resource itself (e.g. CMR document, invoice, report) **is** a valid sub-resource in the URL. Only the format indicator is forbidden.
 
@@ -66,7 +66,7 @@ GET /api/invoices/{id}
 GET /api/orders/{id}/cmr-pdf
 ```
 
-### 3. Format Selection via Accept Header
+### ARCH-002.3: Format Selection via Accept Header
 
 The client specifies the desired format using the `Accept` header:
 

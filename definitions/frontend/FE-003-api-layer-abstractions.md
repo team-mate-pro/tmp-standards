@@ -29,7 +29,7 @@ Each API wrapper function must define the **response type as a TypeScript interf
 
 ## Rules
 
-### 1. HTTP calls belong only in `/api/`
+### FE-003.1: HTTP calls belong only in `/api/`
 
 Every call to `$api.get()`, `$api.post()`, `$api.put()`, `$api.patch()`, `$api.delete()` must reside in a dedicated file under the `/api/` directory.
 
@@ -47,7 +47,7 @@ api/
       post.ts       ← export async function uploadShopLogo()
 ```
 
-### 2. Define response interfaces in the same `/api/` file
+### FE-003.2: Define response interfaces in the same `/api/` file
 
 Every API file must export TypeScript interfaces describing the backend response shape. This provides a single source of truth for the data contract.
 
@@ -68,7 +68,7 @@ export async function fetchShopProducts(): Promise<ShopProduct[]> {
 }
 ```
 
-### 3. Consumers import from `/api/`, never call `$api` directly
+### FE-003.3: Consumers import from `/api/`, never call `$api` directly
 
 ```typescript
 // ❌ WRONG — direct $api call in a component/store/composable
@@ -80,7 +80,7 @@ import { fetchShopProducts } from '~/api/shops/products/get'
 const products = await fetchShopProducts()
 ```
 
-### 4. Request body types must also be defined
+### FE-003.4: Request body types must also be defined
 
 When a function accepts a request body, define an interface for it:
 
@@ -101,7 +101,7 @@ export async function patchShop(body: PatchShopBody): Promise<OrganizationShop> 
 }
 ```
 
-### 5. Allowed directories (exempt from the rule)
+### FE-003.5: Allowed directories (exempt from the rule)
 
 The following top-level directories are allowed to contain direct `$api` calls:
 

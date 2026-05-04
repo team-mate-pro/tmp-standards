@@ -50,7 +50,7 @@ final class UseCaseMustHaveInvokeMethodRuleTest extends RuleTestCase
             [__DIR__ . '/../../_Data/Fixtures/UseCase/MissingInvokeUseCase.php'],
             [
                 [
-                    'UseCase class "MissingInvokeUseCase" must have an __invoke method.',
+                    "UseCase class \"MissingInvokeUseCase\" must have an __invoke method.\n    💡 See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-002-use-case-invoke-method.md",
                     10,
                     'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-002-use-case-invoke-method.md',
                 ],

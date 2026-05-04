@@ -26,7 +26,7 @@ All REST API routes **must use plural nouns** to represent resources. **Verbs ar
 
 ## Rules
 
-### 1. Use Plural Nouns Only
+### ARCH-001.1: Use Plural Nouns Only
 
 Routes must represent **collections** (plural nouns), not actions.
 
@@ -43,7 +43,7 @@ Routes must represent **collections** (plural nouns), not actions.
 /api/checkAvailability
 ```
 
-### 2. No Verbs in Paths
+### ARCH-001.2: No Verbs in Paths
 
 Actions are expressed through HTTP methods, not URL paths.
 
@@ -56,7 +56,7 @@ Actions are expressed through HTTP methods, not URL paths.
 | Update | PATCH | `/api/{resources}/{id}` |
 | Delete | DELETE | `/api/{resources}/{id}` |
 
-### 3. State Changes via PATCH or Sub-resources
+### ARCH-001.3: State Changes via PATCH or Sub-resources
 
 State transitions (enable, disable, activate) should use:
 
@@ -78,7 +78,7 @@ public function updateShopStatus(UpdateShopStatusRequest $request): JsonResponse
 }
 ```
 
-### 4. Sub-resources for Related Collections
+### ARCH-001.4: Sub-resources for Related Collections
 
 ```
 # Correct

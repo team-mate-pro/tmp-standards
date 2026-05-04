@@ -15,6 +15,16 @@ use TeamMatePro\TmpStandards\PHPStan\Rules\ControllerActionMethodSuffixRule;
 #[CoversClass(ControllerActionMethodSuffixRule::class)]
 final class ControllerActionMethodSuffixRuleTest extends RuleTestCase
 {
+    /**
+     * @return list<string>
+     */
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [
+            __DIR__ . '/../../phpstan-test.neon',
+        ];
+    }
+
     protected function getRule(): Rule
     {
         return new ControllerActionMethodSuffixRule(
@@ -36,12 +46,12 @@ final class ControllerActionMethodSuffixRuleTest extends RuleTestCase
             [__DIR__ . '/../../_Data/Fixtures/Controller/ControllerWithoutActionSuffix.php'],
             [
                 [
-                    'Controller method "ControllerWithoutActionSuffix::importAllExternalCustomers()" must have the "Action" suffix (e.g. "importAllExternalCustomersAction").',
+                    "Controller method \"ControllerWithoutActionSuffix::importAllExternalCustomers()\" must have the \"Action\" suffix (e.g. \"importAllExternalCustomersAction\").\n    💡 See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md",
                     14,
                     'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],
                 [
-                    'Controller method "ControllerWithoutActionSuffix::externalCustomerLookup()" must have the "Action" suffix (e.g. "externalCustomerLookupAction").',
+                    "Controller method \"ControllerWithoutActionSuffix::externalCustomerLookup()\" must have the \"Action\" suffix (e.g. \"externalCustomerLookupAction\").\n    💡 See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md",
                     18,
                     'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],
@@ -55,7 +65,7 @@ final class ControllerActionMethodSuffixRuleTest extends RuleTestCase
             [__DIR__ . '/../../_Data/Fixtures/Controller/ControllerWithMixedMethods.php'],
             [
                 [
-                    'Controller method "ControllerWithMixedMethods::createOrder()" must have the "Action" suffix (e.g. "createOrderAction").',
+                    "Controller method \"ControllerWithMixedMethods::createOrder()\" must have the \"Action\" suffix (e.g. \"createOrderAction\").\n    💡 See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md",
                     22,
                     'See: https://github.com/team-mate-pro/tmp-standards/blob/main/definitions/use-case-bundle/UCB-005-controller-action-method-suffix.md',
                 ],

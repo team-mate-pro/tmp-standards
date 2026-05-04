@@ -51,7 +51,7 @@ stages:
 
 ## Pipeline Rules
 
-### Rule 1: HOTFIX bypass
+### INF-003.1: HOTFIX bypass
 
 Commits with message starting with `HOTFIX:` skip all pipeline stages:
 
@@ -63,7 +63,7 @@ workflow:
     - when: always
 ```
 
-### Rule 2: Static analysis — MR and protected branches
+### INF-003.2: Static analysis — MR and protected branches
 
 Static analysis jobs run automatically on:
 - Open Merge Requests (`merge_request_event`)
@@ -78,7 +78,7 @@ Static analysis jobs run automatically on:
     - if: '$CI_COMMIT_BRANCH =~ /^(main|master|stage)$/'
 ```
 
-### Rule 3: Functional tests — manual on MR, automatic on protected branches
+### INF-003.3: Functional tests — manual on MR, automatic on protected branches
 
 Functional tests have different behavior depending on context:
 - On **MRs**: Manual trigger (requires developer to click "play")
@@ -99,7 +99,7 @@ This ensures:
       when: on_success
 ```
 
-### Rule 4: Build and deploy — protected branches only, after tests pass
+### INF-003.4: Build and deploy — protected branches only, after tests pass
 
 Build and deploy jobs run only on pushes to protected branches (`main`, `master`, `stage`) and only after functional tests pass:
 

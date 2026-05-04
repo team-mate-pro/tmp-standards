@@ -1,0 +1,4 @@
+parameters:
+    scanDirectories:
+        - _Data/Fixtures
+        - _Data/Fixtures/UseCaseBundle
